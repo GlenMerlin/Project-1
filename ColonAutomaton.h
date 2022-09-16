@@ -9,6 +9,7 @@ public:
     ColonAutomaton() : Automaton(TokenType::COLON) {}  // Call the base constructor
 
     void S0(const std::string& input);
+    virtual ~ColonAutomaton() {}
 };
 
 #endif // COLONAUTOMATON_H

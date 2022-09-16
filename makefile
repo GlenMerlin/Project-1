@@ -1,2 +1,2 @@
 all:
-	g++ -Wall main.cpp Lexer.cpp Token.cpp -o main
+	g++ -Wall *.cpp -o main
