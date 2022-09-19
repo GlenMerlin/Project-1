@@ -43,4 +43,11 @@ void Lexer::Run(std::string& input) {
 
     Token *newToken = new Token(TokenType::ENDOFFILE, input, lineNumber);
     tokens.push_back(newToken);
+    toString(tokens);
 }
+
+void Lexer::toString(std::vector<Token*> tokens){
+    for (unsigned int i = 0; i < tokens.size(); i++){
+        std::cout << tokens[i];
+    }
+};

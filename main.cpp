@@ -1,12 +1,13 @@
 #include "Lexer.h"
 #include <iostream>
+#include <fstream>
 
 int main(int argc, char** argv) {
-
-    std::cout << "argc: " << argc << std::endl << "argv: " << argv[1] << std::endl;  
-    // TODO: code to read the file in
+    std::string filename = argv[1];
 
     Lexer* lexer = new Lexer();
+    
+    lexer->Run(filename);
 
     // TODO
 

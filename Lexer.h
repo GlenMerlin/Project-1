@@ -3,6 +3,7 @@
 #include <vector>
 #include "Automaton.h"
 #include "Token.h"
+#include <iostream>
 
 class Lexer
 {
@@ -19,7 +20,7 @@ public:
     ~Lexer();
 
     void Run(std::string& input);
-    
+    void toString(std::vector<Token*> tokens);
     // TODO: add other public methods here
 
 };
