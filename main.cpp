@@ -1,6 +1,7 @@
 #include "Lexer.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 int main(int argc, char** argv) {
@@ -14,9 +15,13 @@ int main(int argc, char** argv) {
         return 1;
     };
 
-    // ! This appears to not be reading in multiple lines...
+    // ! This appears to not be getting line numbers properly.
     string input;
-    while(getline(inputFile, input));
+    stringstream ss;
+    while(getline(inputFile, input)){
+        ss << input;
+    }
+    input = ss.str();
     Lexer* lexer = new Lexer();
     
     lexer->Run(input);
