@@ -6,7 +6,8 @@
 #include "Q_MarkAutomaton.h"
 #include "LeftParenAutomaton.h"
 #include "RightParenAutomaton.h"
-
+#include "MultiplyAutomaton.h"
+#include "AddAutomaton.h"
 
 
 Lexer::Lexer() {
@@ -25,6 +26,9 @@ void Lexer::CreateAutomata() {
     automata.push_back(new Q_MarkAutomaton());
     automata.push_back(new LeftParenAutomaton());
     automata.push_back(new RightParenAutomaton());
+    automata.push_back(new MultiplyAutomaton());
+    automata.push_back(new AddAutomaton());
+
 
 
     // TODO: Add the other needed automata here

@@ -10,6 +10,8 @@ enum class TokenType {
     Q_MARK,
     LEFTPAREN,
     RIGHTPAREN,
+    MULTIPLY,
+    ADD,
     // TODO: add the other types of tokens
     UNDEFINED,
     ENDOFFILE
