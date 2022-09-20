@@ -8,6 +8,8 @@ enum class TokenType {
     COMMA,
     PERIOD,
     Q_MARK,
+    LEFTPAREN,
+    RIGHTPAREN,
     // TODO: add the other types of tokens
     UNDEFINED,
     ENDOFFILE
