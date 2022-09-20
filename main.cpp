@@ -18,9 +18,9 @@ int main(int argc, char** argv) {
     // ! This appears to not be getting line numbers properly.
     string input;
     stringstream ss;
-    while(getline(inputFile, input)){
-        ss << input;
-    }
+
+    ss << inputFile.rdbuf();
+    
     input = ss.str();
     Lexer* lexer = new Lexer();
     

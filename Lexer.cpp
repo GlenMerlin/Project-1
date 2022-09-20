@@ -39,6 +39,12 @@ void Lexer::Run(std::string& input) {
     while (input.size() > 0){
         int maxRead = 0;
         Automaton *maxAutomaton = automata[0];
+        while (isspace(input[0])){
+            if (input[0] == '\n'){
+                lineNumber++;
+            } 
+            input.erase(0, 1);
+        }
         for (unsigned int i = 0; i < automata.size(); i++) {
             int inputRead = automata[i]->Start(input);
             if (inputRead > maxRead) {
