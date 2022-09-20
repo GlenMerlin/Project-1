@@ -3,6 +3,9 @@
 #include "ColonDashAutomaton.h"
 #include "CommaAutomaton.h"
 #include "PeriodAutomaton.h"
+#include "Q_MarkAutomaton.h"
+
+
 
 Lexer::Lexer() {
     CreateAutomata();
@@ -17,6 +20,7 @@ void Lexer::CreateAutomata() {
     automata.push_back(new ColonDashAutomaton());
     automata.push_back(new CommaAutomaton());
     automata.push_back(new PeriodAutomaton());
+    automata.push_back(new Q_MarkAutomaton());
 
     // TODO: Add the other needed automata here
 }

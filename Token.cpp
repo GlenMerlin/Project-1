@@ -11,7 +11,6 @@ void Token::toString(){
     TokenType type = this->type;
     std::string description = this->description;
     int line = this->line;
-    // ! Description does not appear to be propagating properly
     std::cout << "(" << enumToString(type) << ",\"" << description << "\"," << line << ")" << std::endl;
 }
 
@@ -21,6 +20,7 @@ std::string Token::enumToString(TokenType type){
         case TokenType::COLON_DASH: return "COLON_DASH"; break;
         case TokenType::COMMA: return "COMMA"; break;
         case TokenType::PERIOD: return "PERIOD"; break;
+        case TokenType::Q_MARK: return "Q_MARK"; break;
         // TODO: add the other types of tokens
         // case TokenType::COLON: return "COLON"; break;
         case TokenType::UNDEFINED: return "UNDEFINED"; break;
