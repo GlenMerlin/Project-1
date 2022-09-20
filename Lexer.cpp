@@ -18,8 +18,8 @@ void Lexer::CreateAutomata() {
 
 void Lexer::Run(std::string& input) {
     int lineNumber = 1;
-    int maxRead = 0;
     while (input.size() > 0){
+        int maxRead = 0;
         Automaton *maxAutomaton = automata[0];
         for (unsigned int i = 0; i < automata.size(); i++) {
             int inputRead = automata[i]->Start(input);
@@ -38,8 +38,9 @@ void Lexer::Run(std::string& input) {
             Token *newToken = new Token(TokenType::UNDEFINED, input, lineNumber);
             tokens.push_back(newToken);
         }
+        std::cout << "The string contains: " << input << std::endl;
         input = input.substr(maxRead);
-        std::cout << "The Remaining String contains: " << input << std::endl;
+        std::cout << "The Remaining String contains: " << input  << " maxRead: " << maxRead << std::endl;
     }
 
     Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);

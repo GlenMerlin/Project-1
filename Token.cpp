@@ -11,6 +11,7 @@ void Token::toString(){
     TokenType type = this->type;
     std::string description = this->description;
     int line = this->line;
+    // ! Description does not appear to be propagating properly
     std::cout << "(" << enumToString(type) << ",\"" << description << "\"," << line << ")" << std::endl;
 }
 

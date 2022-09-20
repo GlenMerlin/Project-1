@@ -13,13 +13,13 @@ int main(int argc, char** argv) {
         cerr << "Couldn't open " << argv[1] << " for input " << endl;
         return 1;
     };
+
+    // ! This appears to not be reading in multiple lines...
     string input;
     while(getline(inputFile, input));
     Lexer* lexer = new Lexer();
     
     lexer->Run(input);
-
-    // TODO
 
     delete lexer;
 
