@@ -39,15 +39,16 @@ void Lexer::Run(std::string& input) {
             tokens.push_back(newToken);
         }
         input = input.substr(maxRead);
+        std::cout << "The Remaining String contains: " << input << std::endl;
     }
 
-    Token *newToken = new Token(TokenType::ENDOFFILE, input, lineNumber);
+    Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);
     tokens.push_back(newToken);
-    toString(tokens);
+    for (unsigned int i = 0; i < tokens.size(); i++){
+        tokens.at(i)->toString();
+    }
 }
 
-void Lexer::toString(std::vector<Token*> tokens){
-    for (unsigned int i = 0; i < tokens.size(); i++){
-        std::cout << tokens[i];
-    }
-};
+// void Lexer::toString(std::vector<Token*> tokens){
+    
+// };

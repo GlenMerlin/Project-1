@@ -19,7 +19,8 @@ private:
 
 public:
     Token(TokenType type, std::string description, int line);
-
+    void toString();
+    std::string enumToString(TokenType);
     // TODO: add other needed methods
 };
 
