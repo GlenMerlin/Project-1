@@ -19,6 +19,8 @@ std::string Token::enumToString(TokenType type){
     switch(type){
         case TokenType::COLON: return "COLON"; break;
         case TokenType::COLON_DASH: return "COLON_DASH"; break;
+        case TokenType::COMMA: return "COMMA"; break;
+        case TokenType::PERIOD: return "PERIOD"; break;
         // TODO: add the other types of tokens
         // case TokenType::COLON: return "COLON"; break;
         case TokenType::UNDEFINED: return "UNDEFINED"; break;
