@@ -30,7 +30,7 @@ void SchemeAutomaton::S2(const std::string& input){
     }
     else{
         Serr();
-        }
+    }
 }
 void SchemeAutomaton::S3(const std::string& input){
     if (input[index] == 'e'){
@@ -40,7 +40,7 @@ void SchemeAutomaton::S3(const std::string& input){
     }
     else{
         Serr();
-        }
+    }
 }
 void SchemeAutomaton::S4(const std::string& input){
     if (input[index] == 'm'){
@@ -50,7 +50,7 @@ void SchemeAutomaton::S4(const std::string& input){
     }
     else{
         Serr();
-        }
+    }
 }
 void SchemeAutomaton::S5(const std::string& input){
     if (input[index] == 'e'){
