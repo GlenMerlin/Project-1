@@ -1,7 +1,7 @@
-#include "SchemeAutomaton.h"
+#include "QueriesAutomaton.h"
 
-void SchemeAutomaton::S0(const std::string& input) {
-    if (input[index] == 'S') {
+void QueriesAutomaton::S0(const std::string& input) {
+    if (input[index] == 'Q') {
         inputRead++;
         index++;
         S1(input);
@@ -11,8 +11,8 @@ void SchemeAutomaton::S0(const std::string& input) {
     }
 }
 
-void SchemeAutomaton::S1(const std::string& input){
-    if (input[index] == 'c'){
+void QueriesAutomaton::S1(const std::string& input){
+    if (input[index] == 'u'){
         inputRead++;
         index++;
         S2(input);
@@ -22,8 +22,8 @@ void SchemeAutomaton::S1(const std::string& input){
     }
 }
 
-void SchemeAutomaton::S2(const std::string& input){
-    if (input[index] == 'h'){
+void QueriesAutomaton::S2(const std::string& input){
+    if (input[index] == 'e'){
         inputRead++;
         index++;
         S3(input);
@@ -32,8 +32,8 @@ void SchemeAutomaton::S2(const std::string& input){
         Serr();
     }
 }
-void SchemeAutomaton::S3(const std::string& input){
-    if (input[index] == 'e'){
+void QueriesAutomaton::S3(const std::string& input){
+    if (input[index] == 'r'){
         inputRead++;
         index++;
         S4(input);
@@ -42,8 +42,8 @@ void SchemeAutomaton::S3(const std::string& input){
         Serr();
     }
 }
-void SchemeAutomaton::S4(const std::string& input){
-    if (input[index] == 'm'){
+void QueriesAutomaton::S4(const std::string& input){
+    if (input[index] == 'i'){
         inputRead++;
         index++;
         S5(input);
@@ -52,7 +52,8 @@ void SchemeAutomaton::S4(const std::string& input){
         Serr();
     }
 }
-void SchemeAutomaton::S5(const std::string& input){
+
+void QueriesAutomaton::S5(const std::string& input){
     if (input[index] == 'e'){
         inputRead++;
         index++;
@@ -63,7 +64,7 @@ void SchemeAutomaton::S5(const std::string& input){
     }
 }
 
-void SchemeAutomaton::S6(const std::string& input){
+void QueriesAutomaton::S6(const std::string& input){
     if (input[index] == 's'){
         inputRead++;
         index++;

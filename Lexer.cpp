@@ -9,9 +9,9 @@
 #include "Automatons/MultiplyAutomaton.h"
 #include "Automatons/AddAutomaton.h"
 #include "Automatons/SchemeAutomaton.h"
+#include "Automatons/FactsAutomaton.h"
 #include "Automatons/RulesAutomaton.h"
-#include "Automatons/SchemeAutomaton.h"
-#include "Automatons/SchemeAutomaton.h"
+#include "Automatons/QueriesAutomaton.h"
 #include "Automatons/IDAutomaton.h"
 #include "Automatons/StringAutomaton.h"
 #include "Automatons/CommentAutomaton.h"
@@ -36,6 +36,9 @@ void Lexer::CreateAutomata() {
     automata.push_back(new MultiplyAutomaton());
     automata.push_back(new AddAutomaton());
     automata.push_back(new SchemeAutomaton());
+    automata.push_back(new FactsAutomaton());
+    automata.push_back(new RulesAutomaton());
+    automata.push_back(new QueriesAutomaton());
     automata.push_back(new IDAutomaton());
     automata.push_back(new StringAutomaton());
     automata.push_back(new CommentAutomaton());

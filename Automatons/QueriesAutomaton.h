@@ -1,12 +1,12 @@
-#ifndef SCHEMEAUTOMATON_H
-#define SCHEMEAUTOMATON_H
+#ifndef QUERIESAUTOMATON_H
+#define QUERIESAUTOMATON_H
 
 #include "Automaton.h"
 
-class SchemeAutomaton : public Automaton
+class QueriesAutomaton : public Automaton
 {
 public:
-    SchemeAutomaton() : Automaton(TokenType::SCHEMES) {}  // Call the base constructor
+    QueriesAutomaton() : Automaton(TokenType::QUERIES) {}  // Call the base constructor
 
     void S0(const std::string& input);
     void S1(const std::string& input);
@@ -16,8 +16,9 @@ public:
     void S5(const std::string& input);
     void S6(const std::string& input);
 
-    virtual ~SchemeAutomaton() {}
+
+    virtual ~QueriesAutomaton() {}
 };
 
-#endif // SCHEMEAUTOMATON_H
+#endif // QUERIESAUTOMATON_H
 
