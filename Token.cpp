@@ -25,10 +25,13 @@ std::string Token::enumToString(TokenType type){
         case TokenType::RIGHTPAREN: return "RIGHTPAREN"; break;
         case TokenType::MULTIPLY: return "MULTIPLY"; break;
         case TokenType::ADD: return "ADD"; break;
+        case TokenType::SCHEMES: return "SCHEMES"; break;
+        case TokenType::FACTS: return "FACTS"; break;
+        case TokenType::RULES: return "RULES"; break;
+        case TokenType::QUERIES: return "QUERIES"; break;
         case TokenType::ID: return "ID"; break;
-
-        // TODO: add the other types of tokens
-        // case TokenType::COLON: return "COLON"; break;
+        case TokenType::STRING: return "STRING"; break;
+        case TokenType::COMMENT: return "COMMENT"; break;
         case TokenType::UNDEFINED: return "UNDEFINED"; break;
         case TokenType::ENDOFFILE: return "ENDOFFILE"; break;
     }

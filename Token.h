@@ -12,8 +12,13 @@ enum class TokenType {
     RIGHTPAREN,
     MULTIPLY,
     ADD,
+    SCHEMES,
+    FACTS,
+    RULES,
+    QUERIES,
     ID,
-    // TODO: add the other types of tokens
+    STRING,
+    COMMENT,
     UNDEFINED,
     ENDOFFILE
 };
@@ -29,7 +34,6 @@ public:
     Token(TokenType type, std::string description, int line);
     void toString();
     std::string enumToString(TokenType);
-    // TODO: add other needed methods
 };
 
 #endif // TOKEN_H

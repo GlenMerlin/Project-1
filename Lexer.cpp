@@ -8,7 +8,10 @@
 #include "Automatons/RightParenAutomaton.h"
 #include "Automatons/MultiplyAutomaton.h"
 #include "Automatons/AddAutomaton.h"
+#include "Automatons/SchemeAutomaton.h"
 #include "Automatons/IDAutomaton.h"
+#include "Automatons/StringAutomaton.h"
+#include "Automatons/CommentAutomaton.h"
 
 
 Lexer::Lexer() {
@@ -29,9 +32,10 @@ void Lexer::CreateAutomata() {
     automata.push_back(new RightParenAutomaton());
     automata.push_back(new MultiplyAutomaton());
     automata.push_back(new AddAutomaton());
+    automata.push_back(new SchemeAutomaton());
     automata.push_back(new IDAutomaton());
-
-    // TODO: Add the other needed automata here
+    automata.push_back(new StringAutomaton());
+    automata.push_back(new CommentAutomaton());
 }
 
 void Lexer::Run(std::string& input) {
@@ -53,7 +57,6 @@ void Lexer::Run(std::string& input) {
             }
         }
         if (maxRead > 0){
-            
             Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
             lineNumber += maxAutomaton->NewLinesRead();
             tokens.push_back(newToken);
@@ -70,11 +73,10 @@ void Lexer::Run(std::string& input) {
 
     Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);
     tokens.push_back(newToken);
+    int tokencount = 0;
     for (unsigned int i = 0; i < tokens.size(); i++){
         tokens.at(i)->toString();
+        tokencount++;
     }
+    std::cout << "Total Tokens = " << tokencount << std::endl;
 }
-
-// void Lexer::toString(std::vector<Token*> tokens){
-    
-// };
