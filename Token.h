@@ -12,6 +12,7 @@ enum class TokenType {
     RIGHTPAREN,
     MULTIPLY,
     ADD,
+    ID,
     // TODO: add the other types of tokens
     UNDEFINED,
     ENDOFFILE

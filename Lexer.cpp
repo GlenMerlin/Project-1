@@ -1,13 +1,14 @@
 #include "Lexer.h"
-#include "ColonAutomaton.h"
-#include "ColonDashAutomaton.h"
-#include "CommaAutomaton.h"
-#include "PeriodAutomaton.h"
-#include "Q_MarkAutomaton.h"
-#include "LeftParenAutomaton.h"
-#include "RightParenAutomaton.h"
-#include "MultiplyAutomaton.h"
-#include "AddAutomaton.h"
+#include "Automatons/ColonAutomaton.h"
+#include "Automatons/ColonDashAutomaton.h"
+#include "Automatons/CommaAutomaton.h"
+#include "Automatons/PeriodAutomaton.h"
+#include "Automatons/Q_MarkAutomaton.h"
+#include "Automatons/LeftParenAutomaton.h"
+#include "Automatons/RightParenAutomaton.h"
+#include "Automatons/MultiplyAutomaton.h"
+#include "Automatons/AddAutomaton.h"
+#include "Automatons/IDAutomaton.h"
 
 
 Lexer::Lexer() {
@@ -28,8 +29,7 @@ void Lexer::CreateAutomata() {
     automata.push_back(new RightParenAutomaton());
     automata.push_back(new MultiplyAutomaton());
     automata.push_back(new AddAutomaton());
-
-
+    automata.push_back(new IDAutomaton());
 
     // TODO: Add the other needed automata here
 }

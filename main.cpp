@@ -15,7 +15,6 @@ int main(int argc, char** argv) {
         return 1;
     };
 
-    // ! This appears to not be getting line numbers properly.
     string input;
     stringstream ss;
 

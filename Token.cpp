@@ -25,6 +25,8 @@ std::string Token::enumToString(TokenType type){
         case TokenType::RIGHTPAREN: return "RIGHTPAREN"; break;
         case TokenType::MULTIPLY: return "MULTIPLY"; break;
         case TokenType::ADD: return "ADD"; break;
+        case TokenType::ID: return "ID"; break;
+
         // TODO: add the other types of tokens
         // case TokenType::COLON: return "COLON"; break;
         case TokenType::UNDEFINED: return "UNDEFINED"; break;
