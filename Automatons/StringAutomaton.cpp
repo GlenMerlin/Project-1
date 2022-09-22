@@ -30,7 +30,6 @@ void StringAutomaton::S2(const std::string& input){
             // * This becomes a ' ? 
         }
         else if (isalnum(input[index])){
-            Serr();
             // * This becomes undefined?
         }
         else {

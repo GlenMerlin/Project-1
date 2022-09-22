@@ -69,7 +69,7 @@
         {
             "cwd": "/home/glenmerlin/Projects/cs236/Project-1",
             "binaryPath": "/home/glenmerlin/Projects/cs236/Project-1/main",
-            "binaryArgs": ["input.txt"]
+            "binaryArgs": ["test.txt"]
         }
     ]
 }

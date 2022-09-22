@@ -39,9 +39,9 @@ void Lexer::CreateAutomata() {
     automata.push_back(new FactsAutomaton());
     automata.push_back(new RulesAutomaton());
     automata.push_back(new QueriesAutomaton());
-    automata.push_back(new IDAutomaton());
     automata.push_back(new StringAutomaton());
     automata.push_back(new CommentAutomaton());
+    automata.push_back(new IDAutomaton());
 }
 
 void Lexer::Run(std::string& input) {

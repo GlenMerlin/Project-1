@@ -28,6 +28,9 @@ void CommentAutomaton::S2(const std::string& input){
         S3(input);
     }
     else if (isalnum(input[index]) || isspace(input[index])){
+        if (input[index] == '\n'){
+            // * increase line count
+        }
         inputRead++;
         index++;
         S2(input);
@@ -46,5 +49,6 @@ void CommentAutomaton::S3(const std::string& input){
     }
     else if (input[index] == EOF){
         // * This needs to become undefined
+    }
 };
 
