@@ -1,19 +1,17 @@
 #include "IDAutomaton.h"
 
-void IDAutomaton::S0(const std::string& input) {
+void IDAutomaton::S0() {
     if (isalpha(input[index])) {
-        inputRead++;
-        index++;
-        S1(input);
+        Next();
+        S1();
     }
     else {
         Serr();
     }
 }
-void IDAutomaton::S1(const std::string& input) {
+void IDAutomaton::S1() {
         if (isalnum(input[index])){
-            inputRead++;
-            index++;
-            S1(input);
+            Next();
+            S1();
         }
 }

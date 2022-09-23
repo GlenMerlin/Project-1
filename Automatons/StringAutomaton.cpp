@@ -1,40 +1,42 @@
 #include "StringAutomaton.h"
 
-void StringAutomaton::S0(const std::string& input) {
+void StringAutomaton::S0() {
     if (input[index] == '\''){
-        inputRead++;
-        index++;
-        S1(input);
+        Next();
+        S1();
     }
     else {
         Serr();
     }
 }
 
-void StringAutomaton::S1(const std::string& input){
+void StringAutomaton::S1(){
     if (isalnum(input[index])){
-        inputRead++;
-        index++;
-        S1(input);
+        Next();
+        S1();
     }
     else if (input[index] == '\''){
-        inputRead++;
-        index++;
-        S2(input);
+        Next();
+        S2();
+    }
+    else if (index >= input.size()){
+        this->type = TokenType::UNDEFINED;
     }
 }
-void StringAutomaton::S2(const std::string& input){
-    if (inputRead != input.size()){
-        if (input[index] == '\''){
-            S1(input);
-            // * This becomes a ' ? 
+void StringAutomaton::S2(){
+    if (index >= input.size()){
+        return;
+    }
+    else if (input[index] == '\''){
+            inputRead++;
+            index++;
+            S1();
         }
-        else if (isalnum(input[index])){
-            // * This becomes undefined?
-        }
-        else {
-            Serr();
-        }
+    else if (input[index] != '\''){
+        return;
+    }
+    else {
+        Serr();
     }
 
 }

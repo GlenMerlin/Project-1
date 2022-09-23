@@ -6,12 +6,12 @@
 class ColonDashAutomaton : public Automaton
 {
 private:
-    void S1(const std::string& input);
+    void S1();
 
 public:
     ColonDashAutomaton() : Automaton(TokenType::COLON_DASH) {}  // Call the base constructor
 
-    void S0(const std::string& input);
+    void S0();
     virtual ~ColonDashAutomaton() {}
 };
 

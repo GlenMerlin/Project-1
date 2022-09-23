@@ -1,51 +1,48 @@
 #include "FactsAutomaton.h"
 
-void FactsAutomaton::S0(const std::string& input) {
+void FactsAutomaton::S0() {
     if (input[index] == 'F') {
         inputRead++;
         index++;
-        S1(input);
+        S1();
     }
     else {
         Serr();
     }
 }
 
-void FactsAutomaton::S1(const std::string& input){
+void FactsAutomaton::S1(){
     if (input[index] == 'a'){
         inputRead++;
         index++;
-        S2(input);
+        S2();
     }
     else{
         Serr();
     }
 }
 
-void FactsAutomaton::S2(const std::string& input){
+void FactsAutomaton::S2(){
     if (input[index] == 'c'){
-        inputRead++;
-        index++;
-        S3(input);
+        Next();
+        S3();
     }
     else{
         Serr();
     }
 }
-void FactsAutomaton::S3(const std::string& input){
+void FactsAutomaton::S3(){
     if (input[index] == 't'){
-        inputRead++;
-        index++;
-        S4(input);
+        Next();
+        S4();
     }
     else{
         Serr();
     }
 }
-void FactsAutomaton::S4(const std::string& input){
+void FactsAutomaton::S4(){
     if (input[index] == 's'){
-        inputRead++;
-        index++;
+        Next();
     }
     else{
         Serr();

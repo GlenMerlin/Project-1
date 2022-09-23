@@ -1,14 +1,18 @@
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 #include "../Token.h"
+typedef unsigned int Index;
+typedef unsigned int Count;
+
 
 class Automaton
 {
 protected:
     int inputRead = 0;
     int newLines = 0;
-    int index = 0;
+    unsigned int index = 0;
     TokenType type;
+    std::string input;
 
 public:
     // Default constructor -- since we have a constructor that takes a parameter,
@@ -20,16 +24,29 @@ public:
     // Start the automaton and return the number of characters read
     //   read == 0 indicates the input was rejected
     //   read  > 0 indicates the input was accepted
-    int Start(const std::string& input) {
+    int Start(const std::string& newInput) {
+        input = newInput;
         newLines = 0;
         inputRead = 0;
         index = 0;
-        S0(input);
+        S0();
         return inputRead;
     }
 
     // Every subclass must define this method
-    virtual void S0(const std::string& input) = 0;
+    virtual void S0() = 0;
+
+    void Next(){
+        if (input.at(index) == '\n'){
+            newLines++;
+        }
+        inputRead++;
+        index++;
+    }
+
+    bool EndOfFile(){
+        return (index >= input.size());
+    }
 
     void Serr() {
         // Indicate the input was rejected

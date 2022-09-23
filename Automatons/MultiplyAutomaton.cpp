@@ -1,6 +1,6 @@
 #include "MultiplyAutomaton.h"
 
-void MultiplyAutomaton::S0(const std::string& input) {
+void MultiplyAutomaton::S0() {
     if (input[index] == '*') {
         inputRead = 1;
     }

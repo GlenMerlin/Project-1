@@ -1,51 +1,46 @@
 #include "RulesAutomaton.h"
 
-void RulesAutomaton::S0(const std::string& input) {
+void RulesAutomaton::S0() {
     if (input[index] == 'R') {
-        inputRead++;
-        index++;
-        S1(input);
+        Next();
+        S1();
     }
     else {
         Serr();
     }
 }
 
-void RulesAutomaton::S1(const std::string& input){
+void RulesAutomaton::S1(){
     if (input[index] == 'u'){
-        inputRead++;
-        index++;
-        S2(input);
+        Next();
+        S2();
     }
     else{
         Serr();
     }
 }
 
-void RulesAutomaton::S2(const std::string& input){
+void RulesAutomaton::S2(){
     if (input[index] == 'l'){
-        inputRead++;
-        index++;
-        S3(input);
+        Next();
+        S3();
     }
     else{
         Serr();
     }
 }
-void RulesAutomaton::S3(const std::string& input){
+void RulesAutomaton::S3(){
     if (input[index] == 'e'){
-        inputRead++;
-        index++;
-        S4(input);
+        Next();
+        S4();
     }
     else{
         Serr();
     }
 }
-void RulesAutomaton::S4(const std::string& input){
+void RulesAutomaton::S4(){
     if (input[index] == 's'){
-        inputRead++;
-        index++;
+        Next();
     }
     else{
         Serr();

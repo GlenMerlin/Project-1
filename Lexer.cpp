@@ -15,6 +15,7 @@
 #include "Automatons/IDAutomaton.h"
 #include "Automatons/StringAutomaton.h"
 #include "Automatons/CommentAutomaton.h"
+#include "Automatons/UndefinedAutomaton.h"
 
 
 Lexer::Lexer() {
@@ -42,6 +43,7 @@ void Lexer::CreateAutomata() {
     automata.push_back(new StringAutomaton());
     automata.push_back(new CommentAutomaton());
     automata.push_back(new IDAutomaton());
+    automata.push_back(new UndefinedAutomaton());
 }
 
 void Lexer::Run(std::string& input) {
@@ -49,11 +51,11 @@ void Lexer::Run(std::string& input) {
     while (input.size() > 0){
         int maxRead = 0;
         Automaton *maxAutomaton = automata[0];
-        while (isspace(input[0])){
+        while (isspace(input[0]) && !input.empty()){
             if (input[0] == '\n'){
                 lineNumber++;
             } 
-            input.erase(0, 1);
+            input = input.substr(1);
         }
         for (unsigned int i = 0; i < automata.size(); i++) {
             int inputRead = automata[i]->Start(input);
@@ -62,19 +64,10 @@ void Lexer::Run(std::string& input) {
                 maxAutomaton = automata[i];
             }
         }
-        if (maxRead > 0){
-            Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
-            lineNumber += maxAutomaton->NewLinesRead();
-            tokens.push_back(newToken);
-        }
-        else {
-            maxRead = 1;
-            Token *newToken = new Token(TokenType::UNDEFINED, input, lineNumber);
-            tokens.push_back(newToken);
-        }
-        // std::cout << "The string contains: " << input << std::endl;
+        Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
+        lineNumber += maxAutomaton->NewLinesRead();
+        tokens.push_back(newToken);
         input = input.substr(maxRead);
-        // std::cout << "The Remaining String contains: " << input  << " maxRead: " << maxRead << std::endl;
     }
 
     Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);

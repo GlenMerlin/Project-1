@@ -8,7 +8,7 @@ class RightParenAutomaton : public Automaton
 public:
     RightParenAutomaton() : Automaton(TokenType::RIGHTPAREN) {}  // Call the base constructor
 
-    void S0(const std::string& input);
+    void S0();
     virtual ~RightParenAutomaton() {}
 };
 

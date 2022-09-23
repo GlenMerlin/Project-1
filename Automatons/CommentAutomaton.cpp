@@ -1,54 +1,72 @@
 #include "CommentAutomaton.h"
 
-void CommentAutomaton::S0(const std::string& input) {
+void CommentAutomaton::S0() {
     if(input[index] == '#'){
-        inputRead++;
-        index++;
-        S1(input);
+        Next();
+        S1_comment();
     }
     else {
         Serr();
     }
 }
 
-void CommentAutomaton::S1(const std::string& input){
-    if(input[index] =='|'){
-        inputRead++;
-        index++;
-        S2(input);
+void CommentAutomaton::S1_comment(){
+    if(input[index] == '|'){
+        Next();
+        S3_block();
+    }
+    else if (input[index] == '\n'){
+        return;
+    }
+    else if (input[index] != '\n'){
+        Next();
+        S2_line();
     }
     else {
         Serr();
     }
 };
-void CommentAutomaton::S2(const std::string& input){
-    if (input[index] == '|'){
-        inputRead++;
-        index++;
-        S3(input);
+void CommentAutomaton::S2_line(){
+    if(EndOfFile() || input[index] == '\n'){
+        return;
     }
-    else if (isalnum(input[index]) || isspace(input[index])){
-        if (input[index] == '\n'){
-            // * increase line count
-        }
-        inputRead++;
-        index++;
-        S2(input);
-    }
-    else if (input[index] == EOF){
-        // * This needs to become undefined
+    else if (input[index] != '\n'){
+        Next();
+        S2_line();
     }
     else {
         Serr();
     }
+    
 
 };
-void CommentAutomaton::S3(const std::string& input){
-    if (input[index] == '#'){
-        inputRead++;
+void CommentAutomaton::S3_block(){
+    if (EndOfFile()){
+        type = TokenType::UNDEFINED;
+        return;
     }
-    else if (input[index] == EOF){
-        // * This needs to become undefined
+    else if (input[index] == '|') {
+        Next();
+        S4_end();
+    }
+    else {
+        Next();
+        S3_block();
     }
 };
+
+void CommentAutomaton::S4_end(){
+    if (EndOfFile()){
+        type = TokenType::UNDEFINED;
+        return;
+    }
+    else if (input[index] == '#'){
+        Next();
+        return;
+    }
+    else {
+        Next();
+        S3_block();
+    }
+}
 

@@ -8,7 +8,7 @@ class Q_MarkAutomaton : public Automaton
 public:
     Q_MarkAutomaton() : Automaton(TokenType::Q_MARK) {}  // Call the base constructor
 
-    void S0(const std::string& input);
+    void S0();
     virtual ~Q_MarkAutomaton() {}
 };
 

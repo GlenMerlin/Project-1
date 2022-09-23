@@ -8,10 +8,12 @@ class CommentAutomaton : public Automaton
 public:
     CommentAutomaton() : Automaton(TokenType::COMMENT) {}  // Call the base constructor
 
-    void S0(const std::string& input);
-    void S1(const std::string& input);
-    void S2(const std::string& input);
-    void S3(const std::string& input);
+    void S0();
+    void S1_comment();
+    void S2_line();
+    void S3_block();
+    void S4_end();
+
 
     virtual ~CommentAutomaton() {}
 };

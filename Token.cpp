@@ -33,7 +33,7 @@ std::string Token::enumToString(TokenType type){
         case TokenType::STRING: return "STRING"; break;
         case TokenType::COMMENT: return "COMMENT"; break;
         case TokenType::UNDEFINED: return "UNDEFINED"; break;
-        case TokenType::ENDOFFILE: return "ENDOFFILE"; break;
+        case TokenType::ENDOFFILE: return "EOF"; break;
     }
     return "ERROR";
 }
