@@ -64,10 +64,12 @@ void Lexer::Run(std::string& input) {
                 maxAutomaton = automata[i];
             }
         }
-        Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
-        lineNumber += maxAutomaton->NewLinesRead();
-        tokens.push_back(newToken);
-        input = input.substr(maxRead);
+        if (!input.empty()){
+            Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
+            lineNumber += maxAutomaton->NewLinesRead();
+            tokens.push_back(newToken);
+            input = input.substr(maxRead);
+        }
     }
 
     Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);
@@ -77,5 +79,5 @@ void Lexer::Run(std::string& input) {
         tokens.at(i)->toString();
         tokencount++;
     }
-    std::cout << "Total Tokens = " << tokencount << std::endl;
+    std::cout << "Total Tokens = " << tokencount;
 }

@@ -21,8 +21,8 @@ std::string Token::enumToString(TokenType type){
         case TokenType::COMMA: return "COMMA"; break;
         case TokenType::PERIOD: return "PERIOD"; break;
         case TokenType::Q_MARK: return "Q_MARK"; break;
-        case TokenType::LEFTPAREN: return "LEFTPAREN"; break;
-        case TokenType::RIGHTPAREN: return "RIGHTPAREN"; break;
+        case TokenType::LEFTPAREN: return "LEFT_PAREN"; break;
+        case TokenType::RIGHTPAREN: return "RIGHT_PAREN"; break;
         case TokenType::MULTIPLY: return "MULTIPLY"; break;
         case TokenType::ADD: return "ADD"; break;
         case TokenType::SCHEMES: return "SCHEMES"; break;

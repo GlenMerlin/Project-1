@@ -11,16 +11,16 @@ void StringAutomaton::S0() {
 }
 
 void StringAutomaton::S1(){
-    if (isalnum(input[index])){
-        Next();
-        S1();
-    }
-    else if (input[index] == '\''){
+    if (input[index] == '\''){
         Next();
         S2();
     }
-    else if (index >= input.size()){
-        this->type = TokenType::UNDEFINED;
+    else if (EndOfFile()){
+        type = TokenType::UNDEFINED;
+    }
+    else {
+        Next();
+        S1();
     }
 }
 void StringAutomaton::S2(){
