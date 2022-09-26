@@ -43,6 +43,15 @@ public:
         inputRead++;
         index++;
     }
+    void Match(char check){
+        if (input.at(index) == check){
+            index++;
+        }
+        else {
+            std::cerr << "Expected: " << check << " Got: " << input.at(index) << "At: " << newLines << endl;
+            throw;
+        }
+    }
 
     bool EndOfFile(){
         return (index >= input.size());
