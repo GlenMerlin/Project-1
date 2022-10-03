@@ -7,7 +7,7 @@ Parser::Parser(std::vector<Token*> tokens) {
 Parser::~Parser() {}
 
 void Parser::Match(TokenType type){
-    
+
 }
 
 void Parser::Run(){
@@ -35,4 +35,23 @@ void Parser::DataLogProgram(){
     // TODO: query function
     // TODO: queryList function
     Match(TokenType::ENDOFFILE);
+}
+
+void Parser::scheme(){
+    
+}
+void Parser::schemeList(){
+    
+}
+void Parser::factList(){
+    
+}
+void Parser::ruleList(){
+    
+}
+void Parser::query(){
+    
+}
+void Parser::queryList(){
+    
 }
