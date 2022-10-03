@@ -1,5 +1,4 @@
 #include "Lexer.h"
-#include "Parser.h"
 #include "Automatons/ColonAutomaton.h"
 #include "Automatons/ColonDashAutomaton.h"
 #include "Automatons/CommaAutomaton.h"
@@ -75,12 +74,8 @@ void Lexer::Run(std::string& input) {
 
     Token *newToken = new Token(TokenType::ENDOFFILE, "", lineNumber);
     tokens.push_back(newToken);
-    Parser parser;
-    parser.Run(tokens);
-    // int tokencount = 0;
-    // for (unsigned int i = 0; i < tokens.size(); i++){
-    //     tokens.at(i)->toString();
-    //     tokencount++;
-    // }
-    // std::cout << "Total Tokens = " << tokencount;
+}
+
+std::vector<Token*> Lexer::getTokens(){
+    return tokens;
 }

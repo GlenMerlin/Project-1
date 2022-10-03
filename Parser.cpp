@@ -1,11 +1,38 @@
 #include "Parser.h"
 #include "Lexer.h"
 
-Parser::Parser() {}
+Parser::Parser(std::vector<Token*> tokens) {
+    this->tokens = tokens;
+}
 Parser::~Parser() {}
 
-void Parser::Run(std::vector<Token*> tokens){
-    for (unsigned int i = 0; i < tokens.size(); i++){
-        std::cout << tokens.at(i) << std::endl;
+void Parser::Match(TokenType type){
+    
+}
+
+void Parser::Run(){
+    try {
+        DataLogProgram();
     }
+    catch (std::exception){
+        std::cerr << "Oops something went wrong!" << std::endl;
+    }
+}
+
+void Parser::DataLogProgram(){
+    Match(TokenType::SCHEMES);
+    Match(TokenType::COLON);
+    // TODO: scheme function
+    // TODO: schemeList function
+    Match(TokenType::FACTS);
+    Match(TokenType::COLON);
+    // TODO: factList function
+    Match(TokenType::RULES);
+    Match(TokenType::COLON);
+    // TODO: ruleList function
+    Match(TokenType::QUERIES);
+    Match(TokenType::COLON);
+    // TODO: query function
+    // TODO: queryList function
+    Match(TokenType::ENDOFFILE);
 }

@@ -5,12 +5,19 @@
 
 class Parser {
 private:
-    
+    std::vector<Token*> tokens;
 public:
-    Parser();
+    Parser(std::vector<Token*> tokens);
     ~Parser();
-
-    void Run(std::vector<Token*> tokens);
+    void Match(TokenType type);
+    void Run();
+    void DataLogProgram();
+    void scheme();
+    void schemeList();
+    void factList();
+    void ruleList();
+    void query();
+    void queryList();
 
 };
 
