@@ -1,6 +1,7 @@
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 #include "../Token.h"
+#include <iostream>
 typedef unsigned int Index;
 typedef unsigned int Count;
 
@@ -48,7 +49,7 @@ public:
             index++;
         }
         else {
-            std::cerr << "Expected: " << check << " Got: " << input.at(index) << "At: " << newLines << endl;
+            std::cerr << "Expected: " << check << " Got: " << input.at(index) << "At: " << newLines << std::endl;
             throw;
         }
     }

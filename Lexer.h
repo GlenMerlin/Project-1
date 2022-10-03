@@ -20,7 +20,6 @@ public:
     ~Lexer();
 
     void Run(std::string& input);
-    // TODO: add other public methods here
 
 };
 
