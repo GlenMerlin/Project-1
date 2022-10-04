@@ -34,6 +34,7 @@ public:
     Token(TokenType type, std::string description, int line);
     void toString();
     std::string enumToString(TokenType);
+    TokenType getTokenType();
 };
 
 #endif // TOKEN_H

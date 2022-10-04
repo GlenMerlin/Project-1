@@ -37,3 +37,7 @@ std::string Token::enumToString(TokenType type){
     }
     return "ERROR";
 }
+
+TokenType Token::getTokenType(){
+    return this->type;
+}
