@@ -8,12 +8,13 @@ Parser::Parser(std::vector<Token*> tokens) : tokens(tokens), index(0), step(0) {
 }
 Parser::~Parser() {}
 
-void Parser::Match(TokenType type){
+bool Parser::Match(TokenType type){
     if (type == getTokenType()){
         std::cout << "Matches!" << std::endl;
+        return 0;
     }
     else {
-        throwErr();
+        throwErr(true);
     }
 }
 
@@ -37,15 +38,16 @@ void Parser::throwErr(bool problem = false){
     if (index >= tokens.size()) throw tokens.at(tokens.size() - 1);
     // ! figure out how brandon made that a new token
     if (index < 0) throw "Out of Bounds";
-    if (problem) throw tokens.at(index);
+    // ! if (problem) throw tokens.at(index);
 }
 
 void Parser::Run(){
     try {
         DataLogProgram();
+        std::cout << "Success!" << std::endl;
     }
     catch (std::exception){
-        std::cerr << "Oops something went wrong!" << std::endl;
+        std::cerr << "Failure!" << std::endl;
     }
 }
 
@@ -102,7 +104,12 @@ void Parser::query(){
 }
 
 void Parser::parameter(){
-
+    if (Match(TokenType::STRING) || Match(TokenType::ID)){
+        // ? what do we do here
+    }
+    else {
+       // throw;
+    }
 }
 
 void Parser::headPredicate(){
@@ -124,33 +131,53 @@ void Parser::predicate(){
 
 // TODO: Implement Lists
 void Parser::schemeList(){
-    
+        
 }
 
 void Parser::factList(){
-    
+        
 }
 
 void Parser::ruleList(){
-    
+        
 }
 
 void Parser::queryList(){
-    
+        
 }
 
 void Parser::predicateList(){
+    if(Match(TokenType::COMMA)){
 
+    }
+    else {
+        // throw;
+    }
 }
 
 void Parser::parameterList(){
+    if(Match(TokenType::COMMA)){
 
+    }
+    else {
+        // throw;
+    }
 }
 
 void Parser::stringList(){
+    if(Match(TokenType::COMMA)){
 
+    }
+    else {
+        // throw;
+    }
 }
 
 void Parser::idList(){
+    if(Match(TokenType::COMMA)){
 
+    }
+    else {
+        // throw;
+    }
 }

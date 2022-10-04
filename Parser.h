@@ -15,7 +15,7 @@ public:
     ~Parser();
 
 // * Helper Functions
-    void Match(TokenType type);
+    bool Match(TokenType type);
     TokenType getTokenType();
     void advanceToken();
     const std::string& prevTokenVal();
