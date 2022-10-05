@@ -127,7 +127,6 @@ void Parser::predicate(){
     Match(TokenType::RIGHTPAREN);
 }
 
-// ! the following all infinite loop :(
 void Parser::schemeList(){
     std::cout << "Inside schemeList" << std::endl;
     if (tokens.at(index)->getTokenType() == TokenType::ID){
