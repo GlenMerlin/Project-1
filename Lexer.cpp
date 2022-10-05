@@ -67,7 +67,9 @@ void Lexer::Run(std::string& input) {
         if (!input.empty()){
             Token *newToken = maxAutomaton->CreateToken(input.substr(0, maxRead), lineNumber);
             lineNumber += maxAutomaton->NewLinesRead();
-            tokens.push_back(newToken);
+            if (newToken->getTokenType() != TokenType::COMMENT){
+                tokens.push_back(newToken);
+            }
             input = input.substr(maxRead);
         }
     }

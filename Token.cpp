@@ -41,3 +41,7 @@ std::string Token::enumToString(TokenType type){
 TokenType Token::getTokenType(){
     return this->type;
 }
+
+std::string Token::getDescription(){
+    return this->description;
+}

@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
  
     Parser* parser = new Parser(tokens);
     parser->Run();
+    parser->toString();
 
     delete lexer;
 

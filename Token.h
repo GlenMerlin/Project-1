@@ -35,6 +35,8 @@ public:
     void toString();
     std::string enumToString(TokenType);
     TokenType getTokenType();
+    std::string getDescription();
+    
 };
 
 #endif // TOKEN_H

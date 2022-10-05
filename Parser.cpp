@@ -15,7 +15,7 @@ bool Parser::Match(TokenType type){
         return true;
     }
     else {
-        throwErr();
+        throwErr(true);
         return false;
     }
 }
@@ -31,16 +31,15 @@ void Parser::advanceToken(){
     index++;
 }
 
-// TODO: Implement this
 const std::string& Parser::prevTokenVal(){
-
+    // * This is an out of bounds check
+    throwErr();
+    return tokens.at(index-1)->getDescription();
 }
-
-void Parser::throwErr(){
+void Parser::throwErr(bool problem = false){
     if (index >= tokens.size()) throw tokens.at(tokens.size() - 1);
-    // ! figure out how brandon made that a new token
-    if (index < 0) throw "Out of Bounds";
-    // ! if (problem) throw tokens.at(index);
+    if (index < 0) throw Token(TokenType::UNDEFINED, "Out Of Bounds", 0);
+    if (problem) throw tokens.at(index);
 }
 
 void Parser::Run(){
@@ -54,7 +53,6 @@ void Parser::Run(){
 }
 
 void Parser::DataLogProgram(){
-    std::cout << "Inside DataLog " << std::endl;
     Match(TokenType::SCHEMES);
     Match(TokenType::COLON);
     scheme();
@@ -75,33 +73,42 @@ void Parser::DataLogProgram(){
 // ! Needs to make data structure
 void Parser::scheme(){
     Match(TokenType::ID);
+    Predicate scheme;
+    scheme.setName(prevTokenVal());
     Match(TokenType::LEFTPAREN);
     Match(TokenType::ID);
-    idList();
+    scheme.addParam(prevTokenVal());
+    idList(scheme);
     Match(TokenType::RIGHTPAREN);
+    
 }
 
 // ! Needs to make data structure
 void Parser::fact(){
     Match(TokenType::ID);
+    Predicate fact;
+    fact.setName(prevTokenVal());
     Match(TokenType::LEFTPAREN);
     Match(TokenType::STRING);
-    stringList();
+    fact.addParam(prevTokenVal());
+    stringList(fact);
     Match(TokenType::RIGHTPAREN);
 }
 
 // ! Needs to make data structure
 void Parser::rule(){
-    headPredicate();
+    Rule rule;
+    headPredicate(rule.getHead());
     Match(TokenType::COLON_DASH);
-    predicate();
-    predicateList();
+    predicate(rule.getBody());
+    predicateList(rule.getBody());
     Match(TokenType::PERIOD);
 }
 
 // ! Needs to make data structure
 void Parser::query(){
-    predicate();
+    Predicate query;
+    predicate(query);
     Match(TokenType::Q_MARK);    
 }
 
@@ -111,24 +118,25 @@ void Parser::parameter(){
     return;
 }
 
-void Parser::headPredicate(){
+void Parser::headPredicate(Predicate& predicate){
     Match(TokenType::ID);
     Match(TokenType::LEFTPAREN);
     Match(TokenType::ID);
-    idList();
+    idList(predicate);
     Match(TokenType::RIGHTPAREN);
 }
 
-void Parser::predicate(){
+void Parser::predicate(Predicate& predicate){
     Match(TokenType::ID);
+    predicate.setName(prevTokenVal());
     Match(TokenType::LEFTPAREN);
     parameter();
+    predicate.addParam(prevTokenVal());
     parameterList();
     Match(TokenType::RIGHTPAREN);
 }
 
 void Parser::schemeList(){
-    std::cout << "Inside schemeList" << std::endl;
     if (tokens.at(index)->getTokenType() == TokenType::ID){
         scheme();
         schemeList();
@@ -138,7 +146,6 @@ void Parser::schemeList(){
 }
 
 void Parser::factList(){
-    std::cout << "Inside factList" << std::endl;
     if (tokens.at(index)->getTokenType() == TokenType::ID){
         fact();
         factList();
@@ -148,7 +155,6 @@ void Parser::factList(){
 }
 
 void Parser::ruleList(){
-    std::cout << "Inside ruleList" << std::endl;
     if (tokens.at(index)->getTokenType() == TokenType::ID){
         rule();
         ruleList();
@@ -158,7 +164,6 @@ void Parser::ruleList(){
 }
 
 void Parser::queryList(){
-    std::cout << "Inside queryList" << std::endl;
     if (tokens.at(index)->getTokenType() == TokenType::ID){
         query();
         queryList();
@@ -167,30 +172,51 @@ void Parser::queryList(){
     else throwErr();
 }
 
-void Parser::predicateList(){
-    std::cout << "Inside predicateList" << std::endl;
+void Parser::predicateList(Predicate& _predicate){
     if(!Match(TokenType::COMMA)) return;
-    predicate();
-    predicateList();
+    predicate(_predicate);
+    predicateList(_predicate);
 }
 
 void Parser::parameterList(){
-    std::cout << "Inside parameterList" << std::endl;
     if(!Match(TokenType::COMMA)) return;
     parameter();
     parameterList();
 }
 
-void Parser::stringList(){
-    std::cout << "Inside stringList" << std::endl;
+void Parser::stringList(Predicate& predicate){
     if(!Match(TokenType::COMMA)) return;
     Match(TokenType::STRING);
-    stringList();
+    predicate.addParam(prevTokenVal());
+    stringList(predicate);
 }
 
-void Parser::idList(){
-    std::cout << "Inside idList" << std::endl;
+void Parser::idList(Predicate& predicate){
     if(!Match(TokenType::COMMA)) return;
     Match(TokenType::ID);
-    idList();
+    predicate.addParam(prevTokenVal());
+    idList(predicate);
+}
+
+void Parser::toString(){
+    std::cout << "Schemes(schemes.size()): " << std::endl;
+    // for (unsigned int i = 0; i < schemes.size(); i++;){
+    //     std::cout << "  " << schemes[i] << std::endl;
+    // }
+    std::cout << "Facts(facts.size()): " << std::endl;
+    // for (unsigned int i = 0; i < facts.size(); i++;){
+    //     std::cout << "  " << facts[i] << std::endl;
+    // }
+    std::cout << "Rules(rules.size): " << std::endl;
+    // for (unsigned int i = 0; i < rules.size(); i++;){
+    //     std::cout << "  " << rules[i] << std::endl;
+    // }
+    std::cout << "Queries(queries.size()): " << std::endl;
+    // for (unsigned int i = 0; i < queries.size(); i++;){
+    //     std::cout << "  " << queries[i] << std::endl;
+    // }
+    std::cout << "Domain(domain.size()): "<< std::endl;
+    // for (unsigned int i = 0; i < domain.size(); i++;){
+    //     std::cout << "  " << domain[i] << std::endl;
+    // }
 }

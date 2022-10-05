@@ -3,12 +3,20 @@
 #include <vector>
 #include <string>
 #include "Token.h"
+#include "DataLogProgram.h"
 typedef unsigned int Index;
 
 class Parser {
 private:
     std::vector<Token*> tokens;
     Index index, step;
+    std::vector<TokenType> steps = {
+        TokenType::SCHEMES,
+        TokenType::FACTS,
+        TokenType::RULES,
+        TokenType::QUERIES,
+        TokenType::ENDOFFILE
+    };
 
 public:
     Parser(std::vector<Token*> tokens);
@@ -19,7 +27,7 @@ public:
     TokenType getTokenType();
     void advanceToken();
     const std::string& prevTokenVal();
-    void throwErr();
+    void throwErr(bool problem);
     
 // ! might not be needed
     void checkForComments();
@@ -33,16 +41,17 @@ public:
     void rule();
     void query();
     void parameter();
-    void headPredicate();
-    void predicate();
+    void headPredicate(Predicate&);
+    void predicate(Predicate&);
     void schemeList();
     void factList();
     void ruleList();
     void queryList();
-    void predicateList();
+    void predicateList(Predicate&);
     void parameterList();
-    void stringList();
-    void idList();
+    void stringList(Predicate&);
+    void idList(Predicate&);
+    void toString();
 
 };
 
