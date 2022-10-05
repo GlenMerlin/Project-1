@@ -134,11 +134,8 @@ void Parser::schemeList(){
         scheme();
         schemeList();
     }
-    else if (tokens.at(index)->getTokenType() == TokenType::FACTS){
-        return;
-    }
-
-    schemeList();
+    else if (tokens.at(index)->getTokenType() == TokenType::FACTS) return;
+    else throwErr();
 }
 
 void Parser::factList(){
@@ -147,12 +144,8 @@ void Parser::factList(){
         fact();
         factList();
     }
-    else if (tokens.at(index)->getTokenType() == TokenType::RULES){
-        return;
-    }
-    else {
-        throwErr();
-    }
+    else if (tokens.at(index)->getTokenType() == TokenType::RULES) return;
+    else throwErr();
 }
 
 void Parser::ruleList(){
@@ -161,12 +154,8 @@ void Parser::ruleList(){
         rule();
         ruleList();
     }
-    else if (tokens.at(index)->getTokenType() == TokenType::QUERIES){
-        return;
-    }
-    else {
-        throwErr();
-    }
+    else if (tokens.at(index)->getTokenType() == TokenType::QUERIES) return;
+    else throwErr();
 }
 
 void Parser::queryList(){
@@ -175,12 +164,8 @@ void Parser::queryList(){
         query();
         queryList();
     }
-    else if (tokens.at(index)->getTokenType() == TokenType::ENDOFFILE){
-        return;
-    }
-    else {
-        throwErr();
-    }
+    else if (tokens.at(index)->getTokenType() == TokenType::ENDOFFILE) return;
+    else throwErr();
 }
 
 void Parser::predicateList(){
