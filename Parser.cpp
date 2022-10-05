@@ -11,10 +11,12 @@ Parser::~Parser() {}
 bool Parser::Match(TokenType type){
     if (type == getTokenType()){
         std::cout << "Matches!" << std::endl;
-        return 0;
+        advanceToken();
+        return true;
     }
     else {
-        throwErr(true);
+        // ? Should this throwErr();
+        return false;
     }
 }
 
@@ -68,6 +70,7 @@ void Parser::DataLogProgram(){
     queryList();
     Match(TokenType::ENDOFFILE);
 }
+
 // ! Needs to make data structure
 void Parser::scheme(){
     Match(TokenType::ID);
@@ -84,7 +87,6 @@ void Parser::fact(){
     Match(TokenType::STRING);
     stringList();
     Match(TokenType::RIGHTPAREN);
-
 }
 
 // ! Needs to make data structure
@@ -94,7 +96,6 @@ void Parser::rule(){
     predicate();
     predicateList();
     Match(TokenType::PERIOD);
-
 }
 
 // ! Needs to make data structure
@@ -104,9 +105,7 @@ void Parser::query(){
 }
 
 void Parser::parameter(){
-    if (!Match(TokenType::STRING) && !Match(TokenType::ID)){
-        throwErr();
-    }
+    if (!Match(TokenType::STRING) && !Match(TokenType::ID)) throwErr();
     // TODO: this needs to return the parameter object made out of that token
     return;
 }
@@ -125,7 +124,6 @@ void Parser::predicate(){
     parameter();
     parameterList();
     Match(TokenType::RIGHTPAREN);
-    
 }
 
 void Parser::schemeList(){
@@ -169,34 +167,25 @@ void Parser::queryList(){
 }
 
 void Parser::predicateList(){
-    if(!Match(TokenType::COMMA)){
-        return;
-    }
+    if(!Match(TokenType::COMMA)) return;
     predicate();
     predicateList();
 }
 
 void Parser::parameterList(){
-    if(!Match(TokenType::COMMA)){
-        return;
-    }
+    if(!Match(TokenType::COMMA)) return;
     parameter();
     parameterList();
 }
 
 void Parser::stringList(){
-    if(!Match(TokenType::COMMA)){
-        return;
-    }
+    if(!Match(TokenType::COMMA)) return;
     Match(TokenType::STRING);
     stringList();
 }
 
 void Parser::idList(){
-    if(!Match(TokenType::COMMA)){
-        return;
-    }
+    if(!Match(TokenType::COMMA)) return;
     Match(TokenType::ID);
     idList();
-    
 }
