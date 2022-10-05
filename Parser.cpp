@@ -104,12 +104,11 @@ void Parser::query(){
 }
 
 void Parser::parameter(){
-    if (Match(TokenType::STRING) || Match(TokenType::ID)){
-        // ? what do we do here
+    if (!Match(TokenType::STRING) && !Match(TokenType::ID)){
+        throwErr();
     }
-    else {
-       // throw;
-    }
+    // TODO: this needs to return the parameter object made out of that token
+    return;
 }
 
 void Parser::headPredicate(){
@@ -129,55 +128,75 @@ void Parser::predicate(){
     
 }
 
-// TODO: Implement Lists
 void Parser::schemeList(){
-        
+    try {
+        scheme();
+    }
+    catch (std::exception) {
+        return;
+    }
+    schemeList();
 }
 
 void Parser::factList(){
-        
+    try {
+        fact();
+    }
+    catch (std::exception) {
+        return;
+    }
+    factList();
 }
 
 void Parser::ruleList(){
-        
+    try {
+        rule();
+    }
+    catch (std::exception) {
+        return;
+    }
+    ruleList();
 }
 
 void Parser::queryList(){
-        
+    try {
+        query();
+    }
+    catch (std::exception) {
+        return;
+    }
+    queryList();
 }
 
 void Parser::predicateList(){
-    if(Match(TokenType::COMMA)){
-
+    if(!Match(TokenType::COMMA)){
+        return;
     }
-    else {
-        // throw;
-    }
+    predicate();
+    predicateList();
 }
 
 void Parser::parameterList(){
-    if(Match(TokenType::COMMA)){
-
+    if(!Match(TokenType::COMMA)){
+        return;
     }
-    else {
-        // throw;
-    }
+    parameter();
+    parameterList();
 }
 
 void Parser::stringList(){
-    if(Match(TokenType::COMMA)){
-
+    if(!Match(TokenType::COMMA)){
+        return;
     }
-    else {
-        // throw;
-    }
+    Match(TokenType::STRING);
+    stringList();
 }
 
 void Parser::idList(){
-    if(Match(TokenType::COMMA)){
-
+    if(!Match(TokenType::COMMA)){
+        return;
     }
-    else {
-        // throw;
-    }
+    Match(TokenType::ID);
+    idList();
+    
 }
