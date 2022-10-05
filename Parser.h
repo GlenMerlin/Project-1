@@ -41,13 +41,13 @@ public:
     void rule();
     void query();
     void parameter();
-    void headPredicate(Predicate&);
-    void predicate(Predicate&);
+    Predicate headPredicate();
+    Predicate predicate();
     void schemeList();
     void factList();
     void ruleList();
     void queryList();
-    void predicateList(Predicate&);
+    void predicateList();
     void parameterList();
     void stringList(Predicate&);
     void idList(Predicate&);

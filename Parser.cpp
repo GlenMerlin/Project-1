@@ -98,9 +98,9 @@ void Parser::fact(){
 // ! Needs to make data structure
 void Parser::rule(){
     Rule rule;
-    headPredicate(rule.getHead());
+    rule.setHead(headPredicate());
     Match(TokenType::COLON_DASH);
-    predicate(rule.getBody());
+    rule.setBody(predicate())
     predicateList(rule.getBody());
     Match(TokenType::PERIOD);
 }
@@ -118,15 +118,18 @@ void Parser::parameter(){
     return;
 }
 
-void Parser::headPredicate(Predicate& predicate){
+Predicate Parser::headPredicate(){
+    Predicate predicate;
     Match(TokenType::ID);
     Match(TokenType::LEFTPAREN);
     Match(TokenType::ID);
     idList(predicate);
     Match(TokenType::RIGHTPAREN);
+    return predicate;
 }
 
-void Parser::predicate(Predicate& predicate){
+Predicate Parser::predicate(){
+    Predicate predicate;
     Match(TokenType::ID);
     predicate.setName(prevTokenVal());
     Match(TokenType::LEFTPAREN);
@@ -134,6 +137,7 @@ void Parser::predicate(Predicate& predicate){
     predicate.addParam(prevTokenVal());
     parameterList();
     Match(TokenType::RIGHTPAREN);
+    return predicate;
 }
 
 void Parser::schemeList(){
@@ -172,10 +176,10 @@ void Parser::queryList(){
     else throwErr();
 }
 
-void Parser::predicateList(Predicate& _predicate){
+void Parser::predicateList(){
     if(!Match(TokenType::COMMA)) return;
-    predicate(_predicate);
-    predicateList(_predicate);
+    predicate();
+    predicateList();
 }
 
 void Parser::parameterList(){

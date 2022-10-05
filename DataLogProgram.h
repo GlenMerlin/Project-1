@@ -26,13 +26,13 @@ class Predicate {
 
 class Rule {
     Predicate head;
-    vector<Predicate> Body;
+    vector<Predicate> body;
     public:
-        Predicate getHead(){
-            return head;
+        Predicate setHead(Predicate& predicate) {
+            head = predicate;
         }
-        vector<Predicate> getBody(){
-            return Body;
+        vector<Predicate> setBody(Predicate& predicate) {
+            body.push_back(predicate);
         }
 };
 
