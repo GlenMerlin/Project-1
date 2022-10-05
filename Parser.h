@@ -19,7 +19,7 @@ public:
     TokenType getTokenType();
     void advanceToken();
     const std::string& prevTokenVal();
-    void throwErr(bool problem);
+    void throwErr();
     
 // ! might not be needed
     void checkForComments();

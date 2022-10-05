@@ -15,7 +15,7 @@ bool Parser::Match(TokenType type){
         return true;
     }
     else {
-        // ? Should this throwErr();
+        throwErr();
         return false;
     }
 }
@@ -36,7 +36,7 @@ const std::string& Parser::prevTokenVal(){
 
 }
 
-void Parser::throwErr(bool problem = false){
+void Parser::throwErr(){
     if (index >= tokens.size()) throw tokens.at(tokens.size() - 1);
     // ! figure out how brandon made that a new token
     if (index < 0) throw "Out of Bounds";
@@ -54,6 +54,7 @@ void Parser::Run(){
 }
 
 void Parser::DataLogProgram(){
+    std::cout << "Inside DataLog " << std::endl;
     Match(TokenType::SCHEMES);
     Match(TokenType::COLON);
     scheme();
@@ -126,65 +127,85 @@ void Parser::predicate(){
     Match(TokenType::RIGHTPAREN);
 }
 
+// ! the following all infinite loop :(
 void Parser::schemeList(){
-    try {
+    std::cout << "Inside schemeList" << std::endl;
+    if (tokens.at(index)->getTokenType() == TokenType::ID){
         scheme();
+        schemeList();
     }
-    catch (std::exception) {
+    else if (tokens.at(index)->getTokenType() == TokenType::FACTS){
         return;
     }
+
     schemeList();
 }
 
 void Parser::factList(){
-    try {
+    std::cout << "Inside factList" << std::endl;
+    if (tokens.at(index)->getTokenType() == TokenType::ID){
         fact();
+        factList();
     }
-    catch (std::exception) {
+    else if (tokens.at(index)->getTokenType() == TokenType::RULES){
         return;
     }
-    factList();
+    else {
+        throwErr();
+    }
 }
 
 void Parser::ruleList(){
-    try {
+    std::cout << "Inside ruleList" << std::endl;
+    if (tokens.at(index)->getTokenType() == TokenType::ID){
         rule();
+        ruleList();
     }
-    catch (std::exception) {
+    else if (tokens.at(index)->getTokenType() == TokenType::QUERIES){
         return;
     }
-    ruleList();
+    else {
+        throwErr();
+    }
 }
 
 void Parser::queryList(){
-    try {
+    std::cout << "Inside queryList" << std::endl;
+    if (tokens.at(index)->getTokenType() == TokenType::ID){
         query();
+        queryList();
     }
-    catch (std::exception) {
+    else if (tokens.at(index)->getTokenType() == TokenType::ENDOFFILE){
         return;
     }
-    queryList();
+    else {
+        throwErr();
+    }
 }
 
 void Parser::predicateList(){
+    std::cout << "Inside predicateList" << std::endl;
     if(!Match(TokenType::COMMA)) return;
     predicate();
     predicateList();
 }
 
 void Parser::parameterList(){
+    std::cout << "Inside parameterList" << std::endl;
     if(!Match(TokenType::COMMA)) return;
     parameter();
     parameterList();
 }
 
 void Parser::stringList(){
+    std::cout << "Inside stringList" << std::endl;
     if(!Match(TokenType::COMMA)) return;
     Match(TokenType::STRING);
     stringList();
 }
 
 void Parser::idList(){
+    std::cout << "Inside idList" << std::endl;
     if(!Match(TokenType::COMMA)) return;
     Match(TokenType::ID);
     idList();
