@@ -10,13 +10,8 @@ class Parser {
 private:
     std::vector<Token*> tokens;
     Index index, step;
-    std::vector<TokenType> steps = {
-        TokenType::SCHEMES,
-        TokenType::FACTS,
-        TokenType::RULES,
-        TokenType::QUERIES,
-        TokenType::ENDOFFILE
-    };
+    DataLogProgram DLP;
+    
 
 public:
     Parser(std::vector<Token*> tokens);
@@ -35,7 +30,7 @@ public:
 
 // * Main functions    
     void Run();
-    void DataLogProgram();
+    void DataLogParser();
     void scheme();
     void fact();
     void rule();
@@ -47,7 +42,7 @@ public:
     void factList();
     void ruleList();
     void queryList();
-    void predicateList();
+    void predicateList(Rule&);
     void parameterList();
     void stringList(Predicate&);
     void idList(Predicate&);

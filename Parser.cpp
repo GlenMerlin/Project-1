@@ -33,7 +33,7 @@ void Parser::advanceToken(){
 
 const std::string& Parser::prevTokenVal(){
     // * This is an out of bounds check
-    throwErr();
+    throwErr(false);
     return tokens.at(index-1)->getDescription();
 }
 void Parser::throwErr(bool problem = false){
@@ -44,7 +44,7 @@ void Parser::throwErr(bool problem = false){
 
 void Parser::Run(){
     try {
-        DataLogProgram();
+        DataLogParser();
         std::cout << "Success!" << std::endl;
     }
     catch (std::exception){
@@ -52,7 +52,7 @@ void Parser::Run(){
     }
 }
 
-void Parser::DataLogProgram(){
+void Parser::DataLogParser(){
     Match(TokenType::SCHEMES);
     Match(TokenType::COLON);
     scheme();
@@ -70,7 +70,6 @@ void Parser::DataLogProgram(){
     Match(TokenType::ENDOFFILE);
 }
 
-// ! Needs to make data structure
 void Parser::scheme(){
     Match(TokenType::ID);
     Predicate scheme;
@@ -80,10 +79,10 @@ void Parser::scheme(){
     scheme.addParam(prevTokenVal());
     idList(scheme);
     Match(TokenType::RIGHTPAREN);
+    DLP.addScheme(scheme);
     
 }
 
-// ! Needs to make data structure
 void Parser::fact(){
     Match(TokenType::ID);
     Predicate fact;
@@ -91,29 +90,30 @@ void Parser::fact(){
     Match(TokenType::LEFTPAREN);
     Match(TokenType::STRING);
     fact.addParam(prevTokenVal());
+    DLP.insertDomain(prevTokenVal());
     stringList(fact);
     Match(TokenType::RIGHTPAREN);
 }
 
-// ! Needs to make data structure
 void Parser::rule(){
     Rule rule;
     rule.setHead(headPredicate());
     Match(TokenType::COLON_DASH);
-    rule.setBody(predicate())
-    predicateList(rule.getBody());
+    rule.setBody(predicate());
+    predicateList(rule);
     Match(TokenType::PERIOD);
+    DLP.addRule(rule);
 }
 
-// ! Needs to make data structure
 void Parser::query(){
     Predicate query;
-    predicate(query);
-    Match(TokenType::Q_MARK);    
+    query = predicate();
+    Match(TokenType::Q_MARK);
+    DLP.addQuery(query);    
 }
 
 void Parser::parameter(){
-    if (!Match(TokenType::STRING) && !Match(TokenType::ID)) throwErr();
+    if (!Match(TokenType::STRING) && !Match(TokenType::ID)) throwErr(true);
     // TODO: this needs to return the parameter object made out of that token
     return;
 }
@@ -176,10 +176,10 @@ void Parser::queryList(){
     else throwErr();
 }
 
-void Parser::predicateList(){
+void Parser::predicateList(Rule& rule){
     if(!Match(TokenType::COMMA)) return;
-    predicate();
-    predicateList();
+    rule.setBody(predicate());
+    predicateList(rule);
 }
 
 void Parser::parameterList(){
@@ -192,6 +192,7 @@ void Parser::stringList(Predicate& predicate){
     if(!Match(TokenType::COMMA)) return;
     Match(TokenType::STRING);
     predicate.addParam(prevTokenVal());
+    DLP.insertDomain(prevTokenVal());
     stringList(predicate);
 }
 
@@ -203,24 +204,24 @@ void Parser::idList(Predicate& predicate){
 }
 
 void Parser::toString(){
-    std::cout << "Schemes(schemes.size()): " << std::endl;
-    // for (unsigned int i = 0; i < schemes.size(); i++;){
+    std::cout << "Schemes("<< DLP.schemeSize() <<"): " << std::endl;
+    // for (unsigned int i = 0; i < DLP.schemeSize(); i++){
     //     std::cout << "  " << schemes[i] << std::endl;
     // }
-    std::cout << "Facts(facts.size()): " << std::endl;
-    // for (unsigned int i = 0; i < facts.size(); i++;){
+    std::cout << "Facts("<< DLP.factsSize() <<"): " << std::endl;
+    // for (unsigned int i = 0; i < facts.size(); i++){
     //     std::cout << "  " << facts[i] << std::endl;
     // }
-    std::cout << "Rules(rules.size): " << std::endl;
-    // for (unsigned int i = 0; i < rules.size(); i++;){
+    std::cout << "Rules("<< DLP.rulesSize() <<"): " << std::endl;
+    // for (unsigned int i = 0; i < rules.size(); i++){
     //     std::cout << "  " << rules[i] << std::endl;
     // }
-    std::cout << "Queries(queries.size()): " << std::endl;
-    // for (unsigned int i = 0; i < queries.size(); i++;){
+    std::cout << "Queries("<< DLP.queriesSize() <<"): " << std::endl;
+    // for (unsigned int i = 0; i < queries.size(); i++){
     //     std::cout << "  " << queries[i] << std::endl;
     // }
-    std::cout << "Domain(domain.size()): "<< std::endl;
-    // for (unsigned int i = 0; i < domain.size(); i++;){
+    std::cout << "Domain("<< DLP.domainSize() <<"): "<< std::endl;
+    // for (unsigned int i = 0; i < domain.size(); i++){
     //     std::cout << "  " << domain[i] << std::endl;
     // }
 }
