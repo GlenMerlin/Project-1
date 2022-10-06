@@ -9,12 +9,14 @@ Parser::Parser(std::vector<Token*> tokens) : tokens(tokens), index(0), step(0) {
 Parser::~Parser() {}
 
 bool Parser::Match(TokenType type){
+    std::cout << tokens.at(index)->getDescription() << std::endl;
     if (type == getTokenType()){
         std::cout << "Matches!" << std::endl;
         advanceToken();
         return true;
     }
     else {
+        std::cout << "Didn't match!" << std::endl;
         throwErr(true);
         return false;
     }
@@ -31,12 +33,23 @@ void Parser::advanceToken(){
     index++;
 }
 
-const std::string& Parser::prevTokenVal(){
+bool Parser::listCheck() {
+    if(tokens.at(index)->getTokenType() != TokenType::COMMA){
+        return false;
+    }
+    else {
+        advanceToken();
+        return true;
+    }
+}
+
+const std::string Parser::prevTokenVal(){
     // * This is an out of bounds check
     throwErr(false);
     return tokens.at(index-1)->getDescription();
 }
 void Parser::throwErr(bool problem = false){
+    std::cout << tokens.at(index)->getDescription() << std::endl;
     if (index >= tokens.size()) throw tokens.at(tokens.size() - 1);
     if (index < 0) throw Token(TokenType::UNDEFINED, "Out Of Bounds", 0);
     if (problem) throw tokens.at(index);
@@ -47,7 +60,7 @@ void Parser::Run(){
         DataLogParser();
         std::cout << "Success!" << std::endl;
     }
-    catch (std::exception){
+    catch (Token errorToken){
         std::cerr << "Failure!" << std::endl;
     }
 }
@@ -93,6 +106,8 @@ void Parser::fact(){
     DLP.insertDomain(prevTokenVal());
     stringList(fact);
     Match(TokenType::RIGHTPAREN);
+    Match(TokenType::PERIOD);
+    DLP.addFact(fact);
 }
 
 void Parser::rule(){
@@ -113,8 +128,8 @@ void Parser::query(){
 }
 
 void Parser::parameter(){
-    if (!Match(TokenType::STRING) && !Match(TokenType::ID)) throwErr(true);
-    // TODO: this needs to return the parameter object made out of that token
+    if (tokens.at(index)->getTokenType() != TokenType::STRING && tokens.at(index)->getTokenType() != TokenType::ID) throwErr(true);
+    advanceToken();
     return;
 }
 
@@ -177,19 +192,19 @@ void Parser::queryList(){
 }
 
 void Parser::predicateList(Rule& rule){
-    if(!Match(TokenType::COMMA)) return;
+    if(!listCheck()) return;
     rule.setBody(predicate());
     predicateList(rule);
 }
 
 void Parser::parameterList(){
-    if(!Match(TokenType::COMMA)) return;
+    if(!listCheck()) return;
     parameter();
     parameterList();
 }
 
 void Parser::stringList(Predicate& predicate){
-    if(!Match(TokenType::COMMA)) return;
+    if(!listCheck()) return;
     Match(TokenType::STRING);
     predicate.addParam(prevTokenVal());
     DLP.insertDomain(prevTokenVal());
@@ -197,7 +212,7 @@ void Parser::stringList(Predicate& predicate){
 }
 
 void Parser::idList(Predicate& predicate){
-    if(!Match(TokenType::COMMA)) return;
+    if(!listCheck()) return;
     Match(TokenType::ID);
     predicate.addParam(prevTokenVal());
     idList(predicate);

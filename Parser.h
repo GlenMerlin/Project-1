@@ -21,7 +21,8 @@ public:
     bool Match(TokenType type);
     TokenType getTokenType();
     void advanceToken();
-    const std::string& prevTokenVal();
+    const std::string prevTokenVal();
+    bool listCheck();
     void throwErr(bool problem);
     
 // ! might not be needed
