@@ -9,14 +9,11 @@ Parser::Parser(std::vector<Token*> tokens) : tokens(tokens), index(0), step(0) {
 Parser::~Parser() {}
 
 bool Parser::Match(TokenType type){
-    // std::cout << tokens.at(index)->getDescription() << std::endl;
     if (type == getTokenType()){
-        // std::cout << "Matches!" << std::endl;
         advanceToken();
         return true;
     }
     else {
-        // std::cout << "Didn't match!" << std::endl;
         throwErr(true);
         return false;
     }
@@ -49,7 +46,6 @@ const std::string Parser::prevTokenVal(){
     return tokens.at(index-1)->getDescription();
 }
 void Parser::throwErr(bool problem = false){
-    // std::cout << tokens.at(index)->getDescription() << std::endl;
     if (index >= tokens.size()) throw tokens.at(tokens.size() - 1);
     if (index < 0) throw Token(TokenType::UNDEFINED, "Out Of Bounds", 0);
     if (problem) throw tokens.at(index);
@@ -59,9 +55,12 @@ void Parser::Run(){
     try {
         DataLogParser();
         std::cout << "Success!" << std::endl;
+        toString();
     }
-    catch (Token errorToken){
-        std::cerr << "Failure!" << std::endl;
+    catch (Token* errorToken){
+        std::cout << "Failure!" << std::endl;
+        std::cout << "  "; 
+        errorToken->toString();
     }
 }
 
@@ -75,7 +74,6 @@ void Parser::DataLogParser(){
     factList();
     Match(TokenType::RULES);
     Match(TokenType::COLON);
-    rule();
     ruleList();
     Match(TokenType::QUERIES);
     Match(TokenType::COLON);
