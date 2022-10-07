@@ -150,7 +150,7 @@ Predicate Parser::predicate(){
     Match(TokenType::LEFTPAREN);
     parameter();
     predicate.addParam(prevTokenVal());
-    parameterList();
+    parameterList(predicate);
     Match(TokenType::RIGHTPAREN);
     return predicate;
 }
@@ -197,10 +197,11 @@ void Parser::predicateList(Rule& rule){
     predicateList(rule);
 }
 
-void Parser::parameterList(){
+void Parser::parameterList(Predicate& predicate){
     if(!listCheck()) return;
     parameter();
-    parameterList();
+    predicate.addParam(prevTokenVal());
+    parameterList(predicate);
 }
 
 void Parser::stringList(Predicate& predicate){
@@ -220,23 +221,13 @@ void Parser::idList(Predicate& predicate){
 
 void Parser::toString(){
     std::cout << "Schemes("<< DLP.schemeSize() <<"): " << std::endl;
-    // for (unsigned int i = 0; i < DLP.schemeSize(); i++){
-    //     std::cout << "  " << schemes[i] << std::endl;
-    // }
+    DLP.schemeToString();
     std::cout << "Facts("<< DLP.factsSize() <<"): " << std::endl;
-    // for (unsigned int i = 0; i < facts.size(); i++){
-    //     std::cout << "  " << facts[i] << std::endl;
-    // }
+    DLP.factToString();
     std::cout << "Rules("<< DLP.rulesSize() <<"): " << std::endl;
-    // for (unsigned int i = 0; i < rules.size(); i++){
-    //     std::cout << "  " << rules[i] << std::endl;
-    // }
+    DLP.rulesToString();
     std::cout << "Queries("<< DLP.queriesSize() <<"): " << std::endl;
-    // for (unsigned int i = 0; i < queries.size(); i++){
-    //     std::cout << "  " << queries[i] << std::endl;
-    // }
+    DLP.queryToString();
     std::cout << "Domain("<< DLP.domainSize() <<"): "<< std::endl;
-    // for (unsigned int i = 0; i < domain.size(); i++){
-    //     std::cout << "  " << domain[i] << std::endl;
-    // }
+    DLP.domainToString();
 }

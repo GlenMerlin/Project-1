@@ -1,6 +1,8 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -12,6 +14,9 @@ class Parameter {
         Parameter(string& input){
             parameter = input;
             isConst = (input[0] == '\'');
+        };
+        string parameterToString(){
+            return parameter;
         };
 };
 
@@ -26,6 +31,23 @@ class Predicate {
             Parameter data = Parameter(param);
             parameters.push_back(data);
         };
+        void predToString(){
+            std::cout << "  " << ID << "(";
+            if (parameters.size() > 1) {
+                for (unsigned int i = 0; i < parameters.size(); i++){
+                    if (i == parameters.size()-1){
+                        std::cout << parameters[i].parameterToString();
+                    }
+                    else {
+                        std::cout << parameters[i].parameterToString() << ","; 
+                    }
+                }
+            }
+            else{
+                std::cout << parameters[0].parameterToString();
+            }
+            std::cout << ")";
+        }
 };
 
 class Rule {
@@ -37,6 +59,12 @@ class Rule {
         }
         void setBody(Predicate predicate) {
             body.push_back(predicate);
+        }
+        void ruleToString(){
+            head.predToString();
+            for (unsigned int i = 0; i < body.size(); i++){
+                body[i].predToString();
+            }
         }
 };
 
@@ -63,6 +91,48 @@ class DataLogProgram {
         }
         void insertDomain(string input){
             domain.insert(input);
+        }
+        void schemeToString(){
+            if (scheme.size() > 0){
+                for (unsigned int i = 0; i < scheme.size(); i++){
+                    scheme[i].predToString();
+                    std::cout << std::endl;
+                }
+            }
+            else return;
+        }
+        void factToString(){
+            if (facts.size() > 0){
+                for (unsigned int i = 0; i < facts.size(); i++){
+                    facts[i].predToString();
+                    std::cout << "." << std::endl;
+                }
+            }
+            else return;
+        }
+        void rulesToString(){
+            if (rules.size() > 0){
+                for (unsigned int i = 0; i < rules.size(); i++){
+                    rules[i].ruleToString();
+                    std::cout << std::endl;
+                }
+            }
+            else return;
+        }
+        void queryToString(){
+            if (queries.size() > 0){
+                for (unsigned int i = 0; i < queries.size(); i++){
+                    queries[i].predToString();
+                    std::cout << "?" << std::endl;
+                }
+            }
+            else return;
+        }
+        void domainToString(){
+            set<string>::iterator it;
+            for (it=domain.begin() ; it != domain.end(); it++){
+                std::cout << *it << endl;
+            }
         }
         int schemeSize(){return scheme.size();};
         int factsSize(){return facts.size();};

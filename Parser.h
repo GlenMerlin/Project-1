@@ -44,7 +44,7 @@ public:
     void ruleList();
     void queryList();
     void predicateList(Rule&);
-    void parameterList();
+    void parameterList(Predicate&);
     void stringList(Predicate&);
     void idList(Predicate&);
     void toString();
