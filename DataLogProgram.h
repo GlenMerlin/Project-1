@@ -32,7 +32,7 @@ class Predicate {
             parameters.push_back(data);
         };
         void predToString(){
-            std::cout << "  " << ID << "(";
+            std::cout << ID << "(";
             if (parameters.size() > 1) {
                 for (unsigned int i = 0; i < parameters.size(); i++){
                     if (i == parameters.size()-1){
@@ -61,9 +61,14 @@ class Rule {
             body.push_back(predicate);
         }
         void ruleToString(){
+            std::cout << "  ";
             head.predToString();
+            std::cout << " :- ";
             for (unsigned int i = 0; i < body.size(); i++){
                 body[i].predToString();
+                if (i != body.size()-1){
+                    std::cout << ",";
+                }
             }
         }
 };
@@ -95,6 +100,7 @@ class DataLogProgram {
         void schemeToString(){
             if (scheme.size() > 0){
                 for (unsigned int i = 0; i < scheme.size(); i++){
+                    std::cout << "  ";
                     scheme[i].predToString();
                     std::cout << std::endl;
                 }
@@ -104,6 +110,7 @@ class DataLogProgram {
         void factToString(){
             if (facts.size() > 0){
                 for (unsigned int i = 0; i < facts.size(); i++){
+                    std::cout << "  ";
                     facts[i].predToString();
                     std::cout << "." << std::endl;
                 }
@@ -114,7 +121,7 @@ class DataLogProgram {
             if (rules.size() > 0){
                 for (unsigned int i = 0; i < rules.size(); i++){
                     rules[i].ruleToString();
-                    std::cout << std::endl;
+                    std::cout << '.' << std::endl;
                 }
             }
             else return;
@@ -122,6 +129,7 @@ class DataLogProgram {
         void queryToString(){
             if (queries.size() > 0){
                 for (unsigned int i = 0; i < queries.size(); i++){
+                    std::cout << "  ";
                     queries[i].predToString();
                     std::cout << "?" << std::endl;
                 }
@@ -131,7 +139,7 @@ class DataLogProgram {
         void domainToString(){
             set<string>::iterator it;
             for (it=domain.begin() ; it != domain.end(); it++){
-                std::cout << *it << endl;
+                std::cout << "  " << *it << endl;
             }
         }
         int schemeSize(){return scheme.size();};
