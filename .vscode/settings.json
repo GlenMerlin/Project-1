@@ -68,8 +68,15 @@
     "makefile.launchConfigurations": [
         {
             "cwd": "/home/glenmerlin/Projects/cs236/Project-1",
+            "binaryPath": "/home/glenmerlin/Projects/cs236/Project-1/lab2",
+            "binaryArgs": [
+                "Lab2PassOffCases/2-80/input2.txt"
+            ]
+        },
+        {
+            "cwd": "/home/glenmerlin/Projects/cs236/Project-1",
             "binaryPath": "/home/glenmerlin/Projects/cs236/Project-1/main",
-            "binaryArgs": ["test.txt"]
+            "binaryArgs": []
         }
     ]
 }
