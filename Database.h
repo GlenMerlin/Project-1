@@ -18,13 +18,38 @@ class Header {
 };
 
 class Relation {
-    set<Tuple> tuples;
-    void selectInVal();
-    void selectInIn();
-    void project();
-    void rename();
+    private:
+        string name;
+        Header columnNames;
+        set<Tuple> tuples;
+    public:
+        Relation() = default;
+        Relation(string name, Header columnNames){
+            this->name = name;
+            this->columnNames = columnNames;
+        }
+        string getName() {return name;}
+        void addTuple(Tuple newTuple) {
+            tuples.insert(newTuple);
+        }
+        void selectInVal(int columnIndex, string value);
+        void selectInIn(int firstColumn, int secondColumn);
+        void project(vector<int> columnsToProject);
+        void rename(vector<string> newColumnNames);
+        // Project 4 Relational Join
 };
 
 class Database {
-    map <string, Relation*> databaseMap;
+    private:
+        map <string, Relation*> databaseMap;
+    public:
+        void AddRelation(Relation newRelation){
+
+        }
+        Relation* GetRelation(string relationName){
+            
+        }
+        Relation GetRelationCopy(string relationName){
+
+        }
 };

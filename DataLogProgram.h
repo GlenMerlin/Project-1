@@ -48,6 +48,12 @@ class Predicate {
             }
             std::cout << ")";
         }
+        string returnPredID(){
+            return ID;
+        }
+        vector <Parameter> returnParams(){
+            return parameters;
+        }
 };
 
 class Rule {
