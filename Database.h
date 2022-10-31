@@ -15,6 +15,13 @@ class Tuple {
 
 class Header {
     vector<string> headers;
+    public:
+        Header createHeaders(vector<Parameter> parameters){
+            for (unsigned int i = 0; i < parameters.size(); i++){
+                headers.push_back(parameters[i].parameterToString());
+            }
+            return *this;
+        }
 };
 
 class Relation {

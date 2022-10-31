@@ -148,6 +148,9 @@ class DataLogProgram {
                 std::cout << "  " << *it << endl;
             }
         }
+        vector <Predicate> returnSchemes(){
+            return scheme;
+        }
         int schemeSize(){return scheme.size();};
         int factsSize(){return facts.size();};
         int rulesSize(){return rules.size();};

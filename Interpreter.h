@@ -1,16 +1,21 @@
 #include "DataLogProgram.h"
 #include "Database.h"
+#include <vector>
 using namespace std;
 
 class Interpreter {
     private:
         DataLogProgram DLP;
         Database database;
+        vector<Predicate> scheme;
+        vector<Predicate> facts;
+        vector<Predicate> queries;
     public:
         void run(){
+            scheme = DLP.returnSchemes();
             for (unsigned int i = 0; i < DLP.schemeSize(); i++){
-                database.AddRelation(); //get the stuff
-                // TODO: create a relation using name and parameter values from ‘s’
+                Header header;
+                database.AddRelation(Relation(scheme[i].returnPredID(), header.createHeaders(scheme[i].returnParams()) ));
             }
             for (unsigned int i = 0; i < DLP.factsSize(); i++){
                 // make a tuple ‘t’ using the values from ‘f’
