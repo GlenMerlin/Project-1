@@ -28,6 +28,7 @@ class Header {
             }
             return *this;
         }
+        int headerSize(){return headers.size();}
 };
 
 class Relation {
@@ -41,14 +42,20 @@ class Relation {
             this->name = name;
             this->columnNames = columnNames;
         }
+        Relation(Relation* relation){
+            this->name = relation->name;
+            this->columnNames = relation->columnNames;
+            this->tuples = relation->tuples;
+        }
         string getName() {return name;}
         void addTuple(Tuple newTuple) {
             tuples.insert(newTuple);
         }
-        void selectInVal(int columnIndex, string value);
-        void selectInIn(int firstColumn, int secondColumn);
-        void project(vector<int> columnsToProject);
-        void rename(vector<string> newColumnNames);
+        int columnSize(){return columnNames.headerSize();}
+        Relation* selectInVal(int columnIndex, string value);
+        Relation* selectInIn(int firstColumn, int secondColumn);
+        Relation* project(vector<int> columnsToProject);
+        Relation* rename(vector<string> newColumnNames);
         void toString();
         // Project 4 Relational Join
 };
