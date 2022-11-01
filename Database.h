@@ -7,10 +7,16 @@ using namespace std;
 
 class Tuple {
     vector<string> values;
-
     bool operator< (const Tuple&rhs) const {
         return values < rhs.values;
     }
+    public:
+        Tuple createTuple(vector<Parameter> parameters){
+            for (unsigned int i = 0; i < parameters.size(); i++){
+                values.push_back(parameters[i].parameterToString());
+            }
+            return *this;
+        }
 };
 
 class Header {
@@ -43,6 +49,7 @@ class Relation {
         void selectInIn(int firstColumn, int secondColumn);
         void project(vector<int> columnsToProject);
         void rename(vector<string> newColumnNames);
+        void toString();
         // Project 4 Relational Join
 };
 
@@ -50,13 +57,8 @@ class Database {
     private:
         map <string, Relation*> databaseMap;
     public:
-        void AddRelation(Relation newRelation){
-
+        void AddRelation(Relation* newRelation){
+            databaseMap.insert({newRelation->getName(), newRelation});
         }
-        Relation* GetRelation(string relationName){
-            
-        }
-        Relation GetRelationCopy(string relationName){
-
-        }
+        Relation* GetRelation(string relationName){return databaseMap.at(relationName);}
 };
