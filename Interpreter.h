@@ -56,6 +56,7 @@ class Interpreter {
                 queryRelation = queryRelation->rename(ColumnNames);
                 //  print the resulting queryRelation
                 queryRelation->toString();
+                delete queryRelation;
             }
         }
     

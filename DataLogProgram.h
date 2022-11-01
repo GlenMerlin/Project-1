@@ -21,6 +21,9 @@ class Parameter {
         bool isConstant(){
             return isConst;
         }
+        operator string() const {
+            return parameter;
+        }
 };
 
 class Predicate {
