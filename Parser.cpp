@@ -55,7 +55,7 @@ void Parser::Run(){
     try {
         DataLogParser();
         std::cout << "Success!" << std::endl;
-        toString();
+        // toString();
     }
     catch (Token* errorToken){
         std::cout << "Failure!" << std::endl;

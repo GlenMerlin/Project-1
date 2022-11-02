@@ -1,21 +1,25 @@
 #include "DataLogProgram.h"
 #include "Database.h"
 #include <vector>
+#include <iostream>
 using namespace std;
 
 class Interpreter {
     private:
         DataLogProgram DLP;
         Database database;
-        vector<Predicate> scheme;
+        vector<Predicate> schemes;
         vector<Predicate> facts;
         vector<Predicate> queries;
     public:
-        void run(){
-            scheme = DLP.returnSchemes();
-            for (unsigned int i = 0; i < facts.size(); i++){
+        Interpreter(DataLogProgram DLP){
+            this->DLP = DLP;
+        };
+        void Run(){
+            schemes = DLP.returnSchemes();
+            for (unsigned int i = 0; i < schemes.size(); i++){
                 Header header;
-                database.AddRelation(new Relation(scheme[i].returnPredID(), header.createHeaders(scheme[i].returnParams()) ));
+                database.AddRelation(new Relation(schemes[i].returnPredID(), header.createHeaders(schemes[i].returnParams()) ));
             }
             facts = DLP.returnFacts();
             for (unsigned int i = 0; i < facts.size(); i++){
@@ -28,6 +32,7 @@ class Interpreter {
 
             queries = DLP.returnQueries();
             for (unsigned int i = 0; i < queries.size(); i++){
+                queries[i].predToString();
                 Relation* relation = database.GetRelation(queries[i].returnPredID());
                 Relation* queryRelation = new Relation(relation);
 

@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include "Parser.h"
+#include "Interpreter.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -29,8 +30,13 @@ int main(int argc, char** argv) {
  
     Parser* parser = new Parser(tokens);
     parser->Run();
+    
+    Interpreter* interpreter =  new Interpreter(parser->getDataLog());
+    interpreter->Run();
 
+    delete parser;
     delete lexer;
+    delete interpreter;
 
     return 0;
 }

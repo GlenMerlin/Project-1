@@ -17,6 +17,10 @@ public:
     Parser(std::vector<Token*> tokens);
     ~Parser();
 
+    DataLogProgram getDataLog(){
+        return DLP;
+    }
+
 // * Helper Functions
     bool Match(TokenType type);
     TokenType getTokenType();
@@ -24,10 +28,6 @@ public:
     const std::string prevTokenVal();
     bool listCheck();
     void throwErr(bool problem);
-    
-// ! might not be needed
-    void checkForComments();
-    void removeComments();
 
 // * Main functions    
     void Run();

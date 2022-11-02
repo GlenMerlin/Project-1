@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <string>
 #include <set>
@@ -8,9 +9,7 @@ using namespace std;
 
 class Tuple {
     vector<string> values;
-    bool operator< (const Tuple&rhs) const {
-        return values < rhs.values;
-    }
+    
     public:
         Tuple createTuple(vector<Parameter> parameters){
             for (unsigned int i = 0; i < parameters.size(); i++){
@@ -24,10 +23,17 @@ class Tuple {
         void push_back(string value){
             values.push_back(value);
         }
+        bool operator< (const Tuple&rhs) const {
+            return values < rhs.values;
+        }
+        void toString(unsigned int i) {
+                cout << values[i];
+        }
 };
 
 class Header {
     vector<string> headers;
+    unsigned int i = 0;
     public:
         Header createHeaders(vector<Parameter> parameters){
             for (unsigned int i = 0; i < parameters.size(); i++){
@@ -46,6 +52,9 @@ class Header {
         }
         void push_back(string value){
             headers.push_back(value);
+        }
+        void toString(unsigned int i){
+            cout << headers.at(i);
         }
         int headerSize(){return headers.size();}
 };
@@ -116,6 +125,48 @@ class Relation {
             return new Relation(name, newHeader, tuples);
         };
         void toString(){
+            if (tuples.size() > 0){
+                cout << "? Yes(" << tuples.size() << ")" << endl;
+                for (auto tuple:tuples){
+                    if (columnNames.headerSize() == 1){
+                        cout << "  ";
+                        columnNames.toString(0);
+                        cout << "=";
+                        tuple.toString(0);
+                        cout << endl;
+                    }
+                    else if (columnNames.headerSize() == 0){
+                        break;
+                    }
+                    else {
+                        for (int i = 0; i < columnNames.headerSize(); i++){
+                            if (i == columnNames.headerSize()-1){
+                                columnNames.toString(i);
+                                cout << "=";
+                                tuple.toString(i);
+                            }
+                            else if (i == 0){
+                                cout << "  ";
+                                columnNames.toString(i);
+                                cout << "=";
+                                tuple.toString(i);
+                                cout << ", ";
+                            }
+                            else {
+                                columnNames.toString(i);
+                                cout << "=";
+                                tuple.toString(i);
+                                cout << ", ";
+                            }
+                        }
+                        cout << endl;
+                    }
+                }
+            }
+            else {
+                cout << "? No" << endl;
+            }
+            
             
         };
         // Project 4 Relational Join
