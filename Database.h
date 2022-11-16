@@ -17,6 +17,12 @@ class Tuple {
             }
             return *this;
         }
+        Tuple createTuple(vector<string> parameters){
+            for (unsigned int i = 0; i < parameters.size(); i++){
+                values.push_back(parameters[i]);
+            }
+            return *this;
+        }
         string at(int index){
             return values.at(index);
         }
@@ -29,6 +35,7 @@ class Tuple {
         void toString(unsigned int i) {
                 cout << values[i];
         }
+        int size(){return values.size();};
 };
 
 class Header {
@@ -46,6 +53,9 @@ class Header {
                 headers.push_back(parameters[i]);
             }
             return *this;
+        }
+        vector<string> returnHeaders(){
+            return this->headers;
         }
         string at(int index){
             return headers.at(index);
@@ -118,12 +128,60 @@ class Relation {
                 newTuples.insert(newRow);
             }
             return new Relation(name, newHeader, newTuples);
-        };
+        }; 
         Relation* rename(vector<string> newColumnNames){
             Header newHeader;
             newHeader.createHeaders(newColumnNames);
             return new Relation(name, newHeader, tuples);
         };
+
+        Relation* natJoin(){
+            map<int, int> matchingIndex;
+            joinHeaders();
+            // for
+                // for
+                    // if isJoinable()
+                        // joinTuples()
+        };
+
+        Header joinHeaders(Header first, Header second, map<int,int> &matches){
+            Header newHeader = first;
+            vector<string> newParams;
+            for (unsigned int i = 0; i < second.headerSize(); i++){
+                bool match = false;
+                for (unsigned int j = 0; j < first.headerSize(); j++){
+                    if (first.at(j) == second.at(i)){
+                        matches.insert({i,j});
+                        match = true;
+                        break;
+                    }
+                }
+                if (!match){
+                    newHeader.push_back(second.at(i));
+                }
+            }
+            return newHeader;    
+        }
+
+        bool isJoinable(Tuple first, Tuple second, map<int, int> matches){
+            for (auto key:matches){
+
+            }
+            // ! iterate over map and check for matches
+        }
+        Tuple joinTuple(Tuple first, Tuple second, map<int, int> matches){
+            vector<string> newParams;
+            bool match = false;
+            for (unsigned int i = 0; i < second.size(); i++){
+                for(unsigned int j = 0; j < first.size(); j++){
+                    // ? Use Map
+                }
+            }
+            Tuple newTuple;
+            newTuple.createTuple(newParams);
+            return newTuple;
+        }
+
         void toString(){
             if (tuples.size() > 0){
                 cout << "? Yes(" << tuples.size() << ")" << endl;
@@ -165,11 +223,8 @@ class Relation {
             }
             else {
                 cout << "? No" << endl;
-            }
-            
-            
+            }          
         };
-        // Project 4 Relational Join
 };
 
 class Database {

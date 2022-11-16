@@ -70,6 +70,7 @@ class Rule {
         void setHead(Predicate predicate) {
             head = predicate;
         }
+        vector<Predicate> getBody(){return body;}
         void setBody(Predicate predicate) {
             body.push_back(predicate);
         }
@@ -156,6 +157,7 @@ class DataLogProgram {
             }
         }
         vector<Predicate> returnSchemes(){return scheme;}
+        vector<Rule> returnRules(){return rules;}
         vector<Predicate> returnFacts(){return facts;}
         vector<Predicate> returnQueries(){return queries;}
 
