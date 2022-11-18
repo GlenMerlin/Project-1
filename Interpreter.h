@@ -17,52 +17,92 @@ class Interpreter {
             this->DLP = DLP;
         };
         void Run(){
+            processSchemes();
+            processFacts();
+            processRules();
+            processQueries();
+            }
+        void processSchemes(){
             schemes = DLP.returnSchemes();
             for (unsigned int i = 0; i < schemes.size(); i++){
                 Header header;
                 database.AddRelation(new Relation(schemes[i].returnPredID(), header.createHeaders(schemes[i].returnParams()) ));
             }
+        }
+        void processFacts(){
             facts = DLP.returnFacts();
             for (unsigned int i = 0; i < facts.size(); i++){
                 Tuple tuple;
                 Relation* relation = database.GetRelation(facts[i].returnPredID());
                 relation->addTuple(tuple.createTuple(facts[i].returnParams()));
             }
-            
+        }
+        void processRules(){
             rules = DLP.returnRules();
-            for (unsigned int i = 0; i < rules.size(); i++){
-                vector<Predicate> body = rules[i].getBody();
-                for (unsigned int j = 0; j < body.size(); j++){
-                    Relation* relation = database.GetRelation(body[j].returnPredID());
-                    Relation* ruleRelation = new Relation(relation);
+            bool tuplesAdded = false;
+            do
+            {
+                for (unsigned int i = 0; i < rules.size(); i++)
+                {
+                    vector<Predicate> body = rules[i].getBody();
+                    vector<Relation *> relations;
+                    for (unsigned int j = 0; j < body.size(); j++)
+                    {
+                        Relation *relation = database.GetRelation(body[j].returnPredID());
+                        Relation *ruleRelation = new Relation(relation);
 
-                    vector<Parameter> ruleParams = body[j].returnParams();
-                    vector<string> ColumnNames;
-                    vector<int> ColumnNums;
-                    map<string, int> variables;
+                        vector<Parameter> ruleParams = body[j].returnParams();
+                        vector<string> ColumnNames;
+                        vector<int> ColumnNums;
+                        map<string, int> variables;
 
-                    for (unsigned int x = 0; x < ruleParams.size(); x++){
-                        string currParam = ruleParams[x].parameterToString();
-                        if (ruleParams[x].isConstant()){
-                            ruleRelation = ruleRelation->selectInVal(j, currParam);
-                        }
-                        else {
-                            if (variables.find(currParam) == variables.end()){
-                                variables.insert({currParam, x});
-                                ColumnNames.push_back(currParam);
-                                ColumnNums.push_back(x);
+                        for (unsigned int x = 0; x < ruleParams.size(); x++)
+                        {
+                            string currParam = ruleParams[x].parameterToString();
+                            if (ruleParams[x].isConstant())
+                            {
+                                ruleRelation = ruleRelation->selectInVal(j, currParam);
                             }
-                            else {
-                                ruleRelation = ruleRelation->selectInIn(variables[currParam], j);
+                            else
+                            {
+                                if (variables.find(currParam) == variables.end())
+                                {
+                                    variables.insert({currParam, x});
+                                    ColumnNames.push_back(currParam);
+                                    ColumnNums.push_back(x);
+                                }
+                                else
+                                {
+                                    ruleRelation = ruleRelation->selectInIn(variables[currParam], j);
+                                }
                             }
                         }
+                        ruleRelation = ruleRelation->project(ColumnNums);
+                        ruleRelation = ruleRelation->rename(ColumnNames);
+                        relations.push_back(ruleRelation);
                     }
-                    ruleRelation = ruleRelation->project(ColumnNums);
-                    ruleRelation = ruleRelation->rename(ColumnNames);
-                    ruleRelation = ruleRelation->natJoin();
+                    Relation* finalRelation = relations.at(0);
+                    for (unsigned int i = 1; i < relations.size(); i++){
+                        finalRelation = finalRelation->natJoin(relations.at(i));
+                    }
+                    Predicate head = rules[i].returnHead();
+                    vector<Parameter>params = head.returnParams();
+                    vector<string>columnNames;
+                    vector<int>columnNums;
+                    // * getting columnNames
+                    for (auto parameter:params){
+                        columnNames.push_back(parameter.parameterToString());
+                    }
+                    // * getting columnNums
+                    for (auto parameter:finalRelation->returnColumns().returnHeaders()){
+                        columnNums.push_back(find(columnNames, parameter));
+                    }
+                    finalRelation = finalRelation->project(columnNums);
+                    finalRelation = finalRelation->rename(columnNames);
                 }
-            }
-
+            } while (tuplesAdded);
+        }
+        void processQueries(){
             queries = DLP.returnQueries();
             for (unsigned int i = 0; i < queries.size(); i++){
                 queries[i].predToString();
@@ -97,6 +137,13 @@ class Interpreter {
                 delete queryRelation;
             }
         }
-    
+        int find(vector<string> columnNames, string toFind){
+            for (unsigned int i = 0; i < columnNames.size(); i++){
+                if (columnNames.at(i) == toFind){
+                    return i;
+                }
+            }
+            throw "syntax error in find function";
+        }
 
 };

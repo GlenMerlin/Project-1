@@ -135,21 +135,24 @@ class Relation {
             return new Relation(name, newHeader, tuples);
         };
 
-        Relation* natJoin(){
+        Relation* natJoin(Relation* second){
             map<int, int> matchingIndex;
-            joinHeaders();
-            // for
-                // for
-                    // if isJoinable()
-                        // joinTuples()
+            joinHeaders(this->columnNames, second->columnNames, matchingIndex);
+            for (auto tuple2:second->tuples){
+                for (auto tuple:this->tuples){
+                    if (isJoinable(tuple, tuple2, matchingIndex)){
+                        joinTuples(tuple, tuple2, matchingIndex);
+                    }
+                }
+            }
         };
 
         Header joinHeaders(Header first, Header second, map<int,int> &matches){
             Header newHeader = first;
             vector<string> newParams;
-            for (unsigned int i = 0; i < second.headerSize(); i++){
+            for (int i = 0; i < second.headerSize(); i++){
                 bool match = false;
-                for (unsigned int j = 0; j < first.headerSize(); j++){
+                for (int j = 0; j < first.headerSize(); j++){
                     if (first.at(j) == second.at(i)){
                         matches.insert({i,j});
                         match = true;
@@ -165,15 +168,15 @@ class Relation {
 
         bool isJoinable(Tuple first, Tuple second, map<int, int> matches){
             for (auto key:matches){
-
+                
             }
             // ! iterate over map and check for matches
         }
-        Tuple joinTuple(Tuple first, Tuple second, map<int, int> matches){
+        Tuple joinTuples(Tuple first, Tuple second, map<int, int> matches){
             vector<string> newParams;
             bool match = false;
-            for (unsigned int i = 0; i < second.size(); i++){
-                for(unsigned int j = 0; j < first.size(); j++){
+            for (int i = 0; i < second.size(); i++){
+                for(int j = 0; j < first.size(); j++){
                     // ? Use Map
                 }
             }
@@ -181,6 +184,7 @@ class Relation {
             newTuple.createTuple(newParams);
             return newTuple;
         }
+        Header returnColumns(){return columnNames;}
 
         void toString(){
             if (tuples.size() > 0){

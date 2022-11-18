@@ -85,6 +85,9 @@ class Rule {
                 }
             }
         }
+        Predicate returnHead(){
+            return head;
+        }
 };
 
 class DataLogProgram {
