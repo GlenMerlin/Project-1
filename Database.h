@@ -137,14 +137,18 @@ class Relation {
 
         Relation* natJoin(Relation* second){
             map<int, int> matchingIndex;
-            joinHeaders(this->columnNames, second->columnNames, matchingIndex);
+            Header newHead = joinHeaders(this->columnNames, second->columnNames, matchingIndex);
+            set<Tuple> newTuples;
+            Tuple newTuple;
             for (auto tuple2:second->tuples){
                 for (auto tuple:this->tuples){
                     if (isJoinable(tuple, tuple2, matchingIndex)){
-                        joinTuples(tuple, tuple2, matchingIndex);
+                        newTuple = joinTuples(tuple, tuple2, matchingIndex);
+                        newTuples.insert(newTuple);
                     }
                 }
             }
+            return new Relation(name, newHead, newTuples);
         };
 
         Header joinHeaders(Header first, Header second, map<int,int> &matches){
@@ -170,6 +174,7 @@ class Relation {
             for (auto key:matches){
                 
             }
+            return false;
             // ! iterate over map and check for matches
         }
         Tuple joinTuples(Tuple first, Tuple second, map<int, int> matches){
@@ -184,7 +189,9 @@ class Relation {
             newTuple.createTuple(newParams);
             return newTuple;
         }
-        Header returnColumns(){return columnNames;}
+        Header returnColumns(){
+            return columnNames;
+        }
 
         void toString(){
             if (tuples.size() > 0){

@@ -94,8 +94,9 @@ class Interpreter {
                         columnNames.push_back(parameter.parameterToString());
                     }
                     // * getting columnNums
-                    for (auto parameter:finalRelation->returnColumns().returnHeaders()){
-                        columnNums.push_back(find(columnNames, parameter));
+                    Header columns = finalRelation->returnColumns();
+                    for (auto parameter : columnNames){
+                        columnNums.push_back(find(columns.returnHeaders(), parameter));
                     }
                     finalRelation = finalRelation->project(columnNums);
                     finalRelation = finalRelation->rename(columnNames);
@@ -139,6 +140,8 @@ class Interpreter {
         }
         int find(vector<string> columnNames, string toFind){
             for (unsigned int i = 0; i < columnNames.size(); i++){
+                cout << columnNames.at(i) << endl;
+                cout << toFind << endl;
                 if (columnNames.at(i) == toFind){
                     return i;
                 }
