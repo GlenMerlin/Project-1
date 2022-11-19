@@ -40,14 +40,11 @@ class Interpreter {
         void processRules(){
             rules = DLP.returnRules();
             bool tuplesAdded = false;
-            do
-            {
-                for (unsigned int i = 0; i < rules.size(); i++)
-                {
+            do{
+                for (unsigned int i = 0; i < rules.size(); i++){
                     vector<Predicate> body = rules[i].getBody();
                     vector<Relation *> relations;
-                    for (unsigned int j = 0; j < body.size(); j++)
-                    {
+                    for (unsigned int j = 0; j < body.size(); j++){
                         Relation *relation = database.GetRelation(body[j].returnPredID());
                         Relation *ruleRelation = new Relation(relation);
 
@@ -56,23 +53,18 @@ class Interpreter {
                         vector<int> ColumnNums;
                         map<string, int> variables;
 
-                        for (unsigned int x = 0; x < ruleParams.size(); x++)
-                        {
+                        for (unsigned int x = 0; x < ruleParams.size(); x++){
                             string currParam = ruleParams[x].parameterToString();
-                            if (ruleParams[x].isConstant())
-                            {
+                            if (ruleParams[x].isConstant()){
                                 ruleRelation = ruleRelation->selectInVal(j, currParam);
                             }
-                            else
-                            {
-                                if (variables.find(currParam) == variables.end())
-                                {
+                            else{
+                                if (variables.find(currParam) == variables.end()){
                                     variables.insert({currParam, x});
                                     ColumnNames.push_back(currParam);
                                     ColumnNums.push_back(x);
                                 }
-                                else
-                                {
+                                else {
                                     ruleRelation = ruleRelation->selectInIn(variables[currParam], j);
                                 }
                             }

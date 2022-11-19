@@ -74,28 +74,31 @@ class Relation {
         string name;
         Header columnNames;
         set<Tuple> tuples;
+        map<int, int> columns;
     public:
         Relation() = default;
+
         Relation(string name, Header columnNames){
             this->name = name;
             this->columnNames = columnNames;
         }
+
         Relation(string name, Header columnNames, set<Tuple> tuples){
             this->name = name;
             this->columnNames = columnNames;
             this->tuples = tuples;
         }
+
         Relation(Relation* relation){
             this->name = relation->name;
             this->columnNames = relation->columnNames;
             this->tuples = relation->tuples;
         }
-        string getName() {return name;}
+        
         void addTuple(Tuple newTuple) {
             tuples.insert(newTuple);
         }
-        int columnSize(){return columnNames.headerSize();}
-
+        
         Relation* selectInVal(int columnIndex, string value){
             Relation* relation = new Relation(name, columnNames);
             for (auto row:tuples){
@@ -104,7 +107,8 @@ class Relation {
                 }
             }
             return relation;
-        };
+        }
+
         Relation* selectInIn(int firstColumn, int secondColumn){
             Relation* relation = new Relation(name, columnNames);
             for (auto row:tuples){
@@ -113,7 +117,8 @@ class Relation {
                 }
             }
             return relation;
-        };
+        }
+
         Relation* project(vector<int> columnsToProject){
             Header newHeader;
             set<Tuple> newTuples;
@@ -128,12 +133,13 @@ class Relation {
                 newTuples.insert(newRow);
             }
             return new Relation(name, newHeader, newTuples);
-        }; 
+        }
+
         Relation* rename(vector<string> newColumnNames){
             Header newHeader;
             newHeader.createHeaders(newColumnNames);
             return new Relation(name, newHeader, tuples);
-        };
+        }
 
         Relation* natJoin(Relation* second){
             map<int, int> matchingIndex;
@@ -151,6 +157,15 @@ class Relation {
             return new Relation(name, newHead, newTuples);
         };
 
+        bool isJoinable(Tuple first, Tuple second, map<int, int> matches){
+            for (auto match:matches){
+                if (first.at(match.first) == second.at(match.second)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
         Header joinHeaders(Header first, Header second, map<int,int> &matches){
             Header newHeader = first;
             vector<string> newParams;
@@ -160,38 +175,32 @@ class Relation {
                     if (first.at(j) == second.at(i)){
                         matches.insert({i,j});
                         match = true;
-                        break;
+                        newHeader.push_back(second.at(i));
+                        columns.insert({j,i});
                     }
-                }
-                if (!match){
-                    newHeader.push_back(second.at(i));
                 }
             }
             return newHeader;    
         }
 
-        bool isJoinable(Tuple first, Tuple second, map<int, int> matches){
-            for (auto key:matches){
-                
-            }
-            return false;
-            // ! iterate over map and check for matches
-        }
         Tuple joinTuples(Tuple first, Tuple second, map<int, int> matches){
             vector<string> newParams;
+            Tuple newTuple = first;
             bool match = false;
             for (int i = 0; i < second.size(); i++){
                 for(int j = 0; j < first.size(); j++){
-                    // ? Use Map
+                    if (first.at(j) == second.at(i)){
+                        newTuple.push_back(second.at(i));
+                    }
                 }
             }
-            Tuple newTuple;
             newTuple.createTuple(newParams);
             return newTuple;
         }
-        Header returnColumns(){
-            return columnNames;
-        }
+
+        Header returnColumns(){return columnNames;}
+        string getName() {return name;}
+        int columnSize(){return columnNames.headerSize();}
 
         void toString(){
             if (tuples.size() > 0){
