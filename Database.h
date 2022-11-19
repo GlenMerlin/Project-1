@@ -74,7 +74,6 @@ class Relation {
         string name;
         Header columnNames;
         set<Tuple> tuples;
-        map<int, int> columns;
     public:
         Relation() = default;
 
@@ -122,7 +121,7 @@ class Relation {
         Relation* project(vector<int> columnsToProject){
             Header newHeader;
             set<Tuple> newTuples;
-            for (auto i:columnsToProject){
+            for (unsigned int i = 0; i < columnsToProject.size(); i++){
                 newHeader.push_back(this->columnNames.at(i));
             }
             for (auto row:tuples){
@@ -176,7 +175,6 @@ class Relation {
                         matches.insert({i,j});
                         match = true;
                         newHeader.push_back(second.at(i));
-                        columns.insert({j,i});
                     }
                 }
             }
@@ -187,12 +185,8 @@ class Relation {
             vector<string> newParams;
             Tuple newTuple = first;
             bool match = false;
-            for (int i = 0; i < second.size(); i++){
-                for(int j = 0; j < first.size(); j++){
-                    if (first.at(j) == second.at(i)){
-                        newTuple.push_back(second.at(i));
-                    }
-                }
+            for (auto match:matches){
+                newTuple.push_back(second.at(match.second));
             }
             newTuple.createTuple(newParams);
             return newTuple;
@@ -203,8 +197,8 @@ class Relation {
         int columnSize(){return columnNames.headerSize();}
 
         void toString(){
-            if (tuples.size() > 0){
-                cout << "? Yes(" << tuples.size() << ")" << endl;
+            if (this->tuples.size() > 0){
+                cout << "? Yes(" << this->tuples.size() << ")" << endl;
                 for (auto tuple:tuples){
                     if (columnNames.headerSize() == 1){
                         cout << "  ";
