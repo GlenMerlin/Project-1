@@ -126,8 +126,8 @@ class Relation {
             }
             for (auto row:tuples){
                 Tuple newRow;
-                for (auto column:columnsToProject){
-                    newRow.push_back(row.at(column));
+                for (unsigned int i = 0; i < columnsToProject.size(); i++){
+                    newRow.push_back(row.at(columnsToProject.at(i)));
                 }
                 newTuples.insert(newRow);
             }
@@ -156,7 +156,7 @@ class Relation {
             return new Relation(name, newHead, newTuples);
         };
 
-        bool isJoinable(Tuple first, Tuple second, map<int, int> matches){
+        bool isJoinable(Tuple first, Tuple second, map<int, int> &matches){
             for (auto match:matches){
                 if (first.at(match.first) == second.at(match.second)){
                     return true;
@@ -169,11 +169,9 @@ class Relation {
             Header newHeader = first;
             vector<string> newParams;
             for (int i = 0; i < second.headerSize(); i++){
-                bool match = false;
                 for (int j = 0; j < first.headerSize(); j++){
                     if (first.at(j) == second.at(i)){
-                        matches.insert({i,j});
-                        match = true;
+                        matches.insert({j,i});
                         newHeader.push_back(second.at(i));
                     }
                 }
@@ -181,20 +179,33 @@ class Relation {
             return newHeader;    
         }
 
-        Tuple joinTuples(Tuple first, Tuple second, map<int, int> matches){
+        Tuple joinTuples(Tuple first, Tuple second, map<int, int> &matches){
             vector<string> newParams;
             Tuple newTuple = first;
-            bool match = false;
             for (auto match:matches){
                 newTuple.push_back(second.at(match.second));
             }
             newTuple.createTuple(newParams);
             return newTuple;
         }
+        bool unionize(Relation* finalRelation){
+            bool result = false;
+            cout << finalRelation->tupleSize() << endl;
+            for (auto item:finalRelation->returnTuples()){
+                cout << "I'm in the for loop" << endl;
+                if (tuples.insert(item).second){
+                    cout << "success!" << endl;
+                    result = true;
+                }
+            }
+            return result;
+        }
 
         Header returnColumns(){return columnNames;}
+        set<Tuple> returnTuples(){return tuples;}
         string getName() {return name;}
         int columnSize(){return columnNames.headerSize();}
+        int tupleSize(){return tuples.size();}
 
         void toString(){
             if (this->tuples.size() > 0){

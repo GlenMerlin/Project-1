@@ -88,6 +88,7 @@ class Rule {
         Predicate returnHead(){
             return head;
         }
+        string getHeadName(){return head.returnPredID();}
 };
 
 class DataLogProgram {

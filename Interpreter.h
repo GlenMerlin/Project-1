@@ -31,22 +31,23 @@ class Interpreter {
                 }
                 
                 rules = DLP.returnRules();
-                // !!! This needs to be changed to true and a base case for the fixed point algorithm
-                // !!! needs to be implemented!
-                bool tuplesAdded = false;
+                bool tuplesAdded = true;
                 do{
                     for (unsigned int i = 0; i < rules.size(); i++){
                         vector<Predicate> body = rules[i].getBody();
+                        Relation* relation;
                         vector<Relation *> relations;
                         for (unsigned int j = 0; j < body.size(); j++){
-                            Relation *relation = database.GetRelation(body[j].returnPredID());
+                            relation = database.GetRelation(body[j].returnPredID());
                             Relation *ruleRelation = new Relation(relation);
 
                             vector<Parameter> ruleParams = body[j].returnParams();
                             vector<string> ColumnNames;
                             vector<int> ColumnNums;
                             map<string, int> variables;
-
+                            if (relation->getName() == "csg"){
+                                cout << "line 49 " << relation->returnTuples().size() << endl;
+                            }
                             for (unsigned int x = 0; x < ruleParams.size(); x++){
                                 string currParam = ruleParams[x].parameterToString();
                                 if (ruleParams[x].isConstant()){
@@ -64,9 +65,13 @@ class Interpreter {
                                 }
                             }
                             ruleRelation = ruleRelation->project(ColumnNums);
+                            cout << "after project" << endl;
                             ruleRelation = ruleRelation->rename(ColumnNames);
+                            cout << "after rename" << endl;
                             relations.push_back(ruleRelation);
                         }
+                        cout << "left body" << endl;
+                        cout << relations.at(1)->returnTuples().size() << endl;
                         Relation* finalRelation = relations.at(0);
                         for (unsigned int i = 1; i < relations.size(); i++){
                             finalRelation = finalRelation->natJoin(relations.at(i));
@@ -84,13 +89,30 @@ class Interpreter {
                                 columnNames.push_back(param.parameterToString());
                             }
                         }
+                        cout << relations.at(1)->returnTuples().size() << endl;
+
                         // * getting columnNums
                         Header columns = finalRelation->returnColumns();
+                        int itr = 0;
                         for (auto parameter:params){
-                            columnNums.push_back(find(columnNames, parameter));
+                            for (auto finalParams:finalRelation->returnColumns().returnHeaders()){
+                                if (finalParams == parameter.parameterToString()){
+                                    columnNums.push_back(itr);
+                                    break;
+                                }
+                            }
+                            itr++;
                         }
+                        for (auto column:columnNums){
+                            cout << "columnNums: " << endl;
+                            cout << column << endl;
+                        }
+
                         finalRelation = finalRelation->project(columnNums);
+
                         finalRelation = finalRelation->rename(columnNames);
+                        tuplesAdded = database.GetRelation(rules[i].getHeadName())->unionize(finalRelation);
+
                     }
                 } while (tuplesAdded);
             
