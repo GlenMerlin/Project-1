@@ -190,15 +190,16 @@ class Relation {
         }
         bool unionize(Relation* finalRelation){
             bool result = false;
-            cout << finalRelation->tupleSize() << endl;
             for (auto item:finalRelation->returnTuples()){
-                cout << "I'm in the for loop" << endl;
                 if (tuples.insert(item).second){
-                    cout << "success!" << endl;
                     result = true;
                 }
             }
             return result;
+        }
+        Relation * setHeader(string newName){
+            this->name = newName;
+            return this;
         }
 
         Header returnColumns(){return columnNames;}

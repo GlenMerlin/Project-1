@@ -32,96 +32,127 @@ class Interpreter {
                 
                 rules = DLP.returnRules();
                 bool tuplesAdded = true;
+                int loopcount = 0;
                 do{
-                    for (unsigned int i = 0; i < rules.size(); i++){
-                        vector<Predicate> body = rules[i].getBody();
-                        Relation* relation;
-                        vector<Relation *> relations;
-                        for (unsigned int j = 0; j < body.size(); j++){
-                            relation = database.GetRelation(body[j].returnPredID());
-                            Relation *ruleRelation = new Relation(relation);
+                    for (auto rule:rules){
+                        rule.ruleToString();
+                        cout << '.' << endl;
 
-                            vector<Parameter> ruleParams = body[j].returnParams();
-                            vector<string> ColumnNames;
-                            vector<int> ColumnNums;
-                            map<string, int> variables;
-                            if (relation->getName() == "csg"){
-                                cout << "line 49 " << relation->returnTuples().size() << endl;
+                        // Step 1: Evaluate Predicates
+                        vector<Relation*> finalRelations;
+                        for (auto body:rule.getBody()){
+                            finalRelations.push_back(evaluatePredicate(body));
+                        }
+
+                        Relation* relation = finalRelations.at(0);
+
+                        // Step 2: Projection
+                        if (finalRelations.size() > 1){
+                            for (unsigned int i = 1; i < finalRelations.size(); i++){
+                                relation = relation->natJoin(finalRelations.at(i));
                             }
-                            for (unsigned int x = 0; x < ruleParams.size(); x++){
-                                string currParam = ruleParams[x].parameterToString();
-                                if (ruleParams[x].isConstant()){
-                                    ruleRelation = ruleRelation->selectInVal(j, currParam);
-                                }
-                                else{
-                                    if (variables.find(currParam) == variables.end()){
-                                        variables.insert({currParam, x});
-                                        ColumnNames.push_back(currParam);
-                                        ColumnNums.push_back(x);
-                                    }
-                                    else {
-                                        ruleRelation = ruleRelation->selectInIn(variables[currParam], j);
-                                    }
+                        }
+
+                        // Step 3: Project
+                        vector<int> ColumnNums;
+                        for (unsigned int i = 0; i < rule.returnHead().returnParams().size(); i++){
+                            int requiredLoops = relation->returnColumns().headerSize();
+                            for (unsigned int j = 0; j < requiredLoops; j++){
+                                if (rule.returnHead().returnParams().at(i).parameterToString() == relation->returnColumns().at(j)){
+                                    ColumnNums.push_back(j);
                                 }
                             }
-                            ruleRelation = ruleRelation->project(ColumnNums);
-                            cout << "after project" << endl;
-                            ruleRelation = ruleRelation->rename(ColumnNames);
-                            cout << "after rename" << endl;
-                            relations.push_back(ruleRelation);
                         }
-                        cout << "left body" << endl;
-                        cout << relations.at(1)->returnTuples().size() << endl;
-                        Relation* finalRelation = relations.at(0);
-                        for (unsigned int i = 1; i < relations.size(); i++){
-                            finalRelation = finalRelation->natJoin(relations.at(i));
-                        }
-                        Predicate head = rules[i].returnHead();
-                        // what we want
-                        vector<Parameter>params = head.returnParams();
+                        relation = relation->project(ColumnNums);
 
-                        vector<string>columnNames;
-                        vector<int>columnNums;
-                        // * getting columnNames
-                        for (auto predicate:body){
-                            for (auto param: predicate.returnParams()){
-                                // look through
-                                columnNames.push_back(param.parameterToString());
-                            }
-                        }
-                        cout << relations.at(1)->returnTuples().size() << endl;
+                        // Step 4: Rename
+                        
+                        relation->setHeader(database.GetRelation(rule.returnHead().returnPredID())->getName());
 
-                        // * getting columnNums
-                        Header columns = finalRelation->returnColumns();
-                        int itr = 0;
-                        for (auto parameter:params){
-                            for (auto finalParams:finalRelation->returnColumns().returnHeaders()){
-                                if (finalParams == parameter.parameterToString()){
-                                    columnNums.push_back(itr);
-                                    break;
-                                }
-                            }
-                            itr++;
-                        }
-                        for (auto column:columnNums){
-                            cout << "columnNums: " << endl;
-                            cout << column << endl;
-                        }
-
-                        finalRelation = finalRelation->project(columnNums);
-
-                        finalRelation = finalRelation->rename(columnNames);
-                        tuplesAdded = database.GetRelation(rules[i].getHeadName())->unionize(finalRelation);
-
+                        // Step 5: Union
+                        tuplesAdded = database.GetRelation(rule.getHeadName())->unionize(finalRelations.at(loopcount));
+                        loopcount++;
                     }
+                    // for (unsigned int i = 0; i < rules.size(); i++){
+                    //     vector<Predicate> body = rules[i].getBody();
+                    //     Relation* relation;
+                    //     vector<Relation *> relations;
+                    //     for (unsigned int j = 0; j < body.size(); j++){
+                    //         relation = database.GetRelation(body[j].returnPredID());
+                    //         Relation *ruleRelation = new Relation(relation);
+
+                    //         vector<Parameter> ruleParams = body[j].returnParams();
+                    //         vector<string> ColumnNames;
+                    //         vector<int> ColumnNums;
+                    //         map<string, int> variables;
+                    //         for (unsigned int x = 0; x < ruleParams.size(); x++){
+                    //             string currParam = ruleParams[x].parameterToString();
+                    //             if (ruleParams[x].isConstant()){
+                    //                 ruleRelation = ruleRelation->selectInVal(j, currParam);
+                    //             }
+                    //             else{
+                    //                 if (variables.find(currParam) == variables.end()){
+                    //                     variables.insert({currParam, x});
+                    //                     ColumnNames.push_back(currParam);
+                    //                     ColumnNums.push_back(x);
+                    //                 }
+                    //                 else {
+                    //                     ruleRelation = ruleRelation->selectInIn(variables[currParam], j);
+                    //                 }
+                    //             }
+                    //         }
+                    //         ruleRelation = ruleRelation->project(ColumnNums);
+                    //         ruleRelation = ruleRelation->rename(ColumnNames);
+                    //         relations.push_back(ruleRelation);
+                    //     }
+                    //     Relation* finalRelation = relations.at(0);
+                    //     for (unsigned int i = 1; i < relations.size(); i++){
+                    //         finalRelation = finalRelation->natJoin(relations.at(i));
+                    //     }
+                    //     Predicate head = rules[i].returnHead();
+                    //     // what we want
+                    //     vector<Parameter>params = head.returnParams();
+
+                    //     vector<string>columnNames;
+                    //     vector<int>columnNums;
+                    //     // * getting columnNames
+                    //     for (auto predicate:body){
+                    //         for (auto param: predicate.returnParams()){
+                    //             // look through
+                    //             columnNames.push_back(param.parameterToString());
+                    //         }
+                    //     }
+                    //     // * getting columnNums
+                    //     Header columns = finalRelation->returnColumns();
+                    //     int itr = 0;
+                    //     for (auto parameter:params){
+                    //         for (auto finalParams:finalRelation->returnColumns().returnHeaders()){
+                    //             if (finalParams == parameter.parameterToString()){
+                    //                 columnNums.push_back(itr);
+                    //                 break;
+                    //             }
+                    //         }
+                    //         itr++;
+                    //     }
+                    //     for (auto column:columnNums){
+                    //         cout << "columnNums: " << endl;
+                    //         cout << column << endl;
+                    //     }
+
+                    //     finalRelation = finalRelation->project(columnNums);
+                    //     finalRelation = finalRelation->rename(columnNames);
+                    //     tuplesAdded = database.GetRelation(rules[i].getHeadName())->unionize(finalRelation);
+                    // }
+                    // loopcount++;
                 } while (tuplesAdded);
-            
+                cout << "Finished with " << loopcount << " loops!" << endl;
+
                 queries = DLP.returnQueries();
                 for (unsigned int i = 0; i < queries.size(); i++){
                     queries[i].predToString();
                     Relation* relation = database.GetRelation(queries[i].returnPredID());
                     Relation* queryRelation = new Relation(relation);
-
+                    
                     vector<Parameter> queryParams = queries[i].returnParams();
                     vector<string> ColumnNames;
                     vector<int> ColumnNums;
@@ -147,9 +178,11 @@ class Interpreter {
                     queryRelation = queryRelation->rename(ColumnNames);
                     //  print the resulting queryRelation
                     queryRelation->toString();
-                    delete queryRelation;
                 }
             }
+        Relation* evaluatePredicate(Predicate predicate){
+            
+        }
         int find(vector<string> columnNames, string toFind){
             for (unsigned int i = 0; i < columnNames.size(); i++){
                 if (columnNames.at(i) == toFind){

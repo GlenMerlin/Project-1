@@ -85,9 +85,7 @@ class Rule {
                 }
             }
         }
-        Predicate returnHead(){
-            return head;
-        }
+        Predicate returnHead(){return head;}
         string getHeadName(){return head.returnPredID();}
 };
 
