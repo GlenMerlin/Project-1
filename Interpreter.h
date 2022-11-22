@@ -56,11 +56,13 @@ class Interpreter {
                         }
 
                         // Step 3: Project
+                        vector<string> ColumnNames;
                         vector<int> ColumnNums;
                         for (unsigned int i = 0; i < rule.returnHead().returnParams().size(); i++){
                             int requiredLoops = relation->returnColumns().headerSize();
                             for (int j = 0; j < requiredLoops; j++){
                                 if (rule.returnHead().returnParams().at(i).parameterToString() == relation->returnColumns().at(j)){
+                                    ColumnNames.push_back(rule.returnHead().returnParams().at(i).parameterToString());
                                     ColumnNums.push_back(j);
                                 }
                             }
@@ -78,7 +80,7 @@ class Interpreter {
                         
                         tuplesAdded = database.GetRelation(rule.getHeadName())->unionize(relation);
                         loopcount++;
-                        tupleToString(relation->returnTuples(), relation);
+                        tupleToString(relation->returnTuples(), relation, ColumnNames);
                     }
                     for (auto rule:rules){
                         rule.ruleToString();
@@ -150,11 +152,11 @@ class Interpreter {
             factRelation = factRelation->rename(vectorStrings);
             return factRelation;
         }
-        void tupleToString(set<Tuple> tuples, Relation* headRelation){
+        void tupleToString(set<Tuple> tuples, Relation* headRelation, vector<string> ColumnNames){
             for (auto item:tuples){
                 cout << "  ";
                 for (int i = 0; i < headRelation->returnColumns().headerSize(); i++){
-                    cout << headRelation->returnColumns().returnHeaders().at(i) << "=" << item.at(i);
+                    cout << (char) toupper(ColumnNames.at(i)[0])  << "=" << item.at(i);
                     if (i + 1 != headRelation->returnColumns().headerSize()){
                         cout << ", ";
                     }
