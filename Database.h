@@ -166,10 +166,12 @@ class Relation {
         }
 
         Header joinHeaders(Header first, Header second, map<int,int> &matches){
+            // ! Might be brokey
             Header newHeader = first;
             vector<string> newParams;
             for (int i = 0; i < second.headerSize(); i++){
                 for (int j = 0; j < first.headerSize(); j++){
+                    // ? logic error in if statement?
                     if (first.at(j) == second.at(i)){
                         matches.insert({j,i});
                         newHeader.push_back(second.at(i));
