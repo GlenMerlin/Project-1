@@ -75,7 +75,6 @@ class Rule {
             body.push_back(predicate);
         }
         void ruleToString(){
-            std::cout << "  ";
             head.predToString();
             std::cout << " :- ";
             for (unsigned int i = 0; i < body.size(); i++){

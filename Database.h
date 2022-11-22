@@ -74,6 +74,7 @@ class Relation {
         string name;
         Header columnNames;
         set<Tuple> tuples;
+        map<int, int> matches;
     public:
         Relation() = default;
 
@@ -141,14 +142,13 @@ class Relation {
         }
 
         Relation* natJoin(Relation* second){
-            map<int, int> matchingIndex;
-            Header newHead = joinHeaders(this->columnNames, second->columnNames, matchingIndex);
+            Header newHead = joinHeaders(this->columnNames, second->columnNames, matches);
             set<Tuple> newTuples;
             Tuple newTuple;
             for (auto tuple2:second->tuples){
                 for (auto tuple:this->tuples){
-                    if (isJoinable(tuple, tuple2, matchingIndex)){
-                        newTuple = joinTuples(tuple, tuple2, matchingIndex);
+                    if (isJoinable(tuple, tuple2, matches)){
+                        newTuple = joinTuples(tuple, tuple2, matches);
                         newTuples.insert(newTuple);
                     }
                 }
@@ -166,16 +166,17 @@ class Relation {
         }
 
         Header joinHeaders(Header first, Header second, map<int,int> &matches){
-            // ! Might be brokey
             Header newHeader = first;
-            vector<string> newParams;
             for (int i = 0; i < second.headerSize(); i++){
+                bool unique = true;
                 for (int j = 0; j < first.headerSize(); j++){
-                    // ? logic error in if statement?
                     if (first.at(j) == second.at(i)){
+                        unique = false;
                         matches.insert({j,i});
-                        newHeader.push_back(second.at(i));
                     }
+                }
+                if (unique){
+                    newHeader.push_back(second.at(i));
                 }
             }
             return newHeader;    
@@ -185,7 +186,14 @@ class Relation {
             vector<string> newParams;
             Tuple newTuple = first;
             for (auto match:matches){
-                newTuple.push_back(second.at(match.second));
+                for (int i = 0; i < second.size(); i++){
+                    if (i == match.second){
+                        continue;
+                    }
+                    else {
+                        newTuple.push_back(second.at(i));
+                    }
+                }
             }
             newTuple.createTuple(newParams);
             return newTuple;

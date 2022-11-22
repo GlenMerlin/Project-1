@@ -54,7 +54,7 @@ void Parser::throwErr(bool problem = false){
 void Parser::Run(){
     try {
         DataLogParser();
-        std::cout << "Success!" << std::endl;
+        // std::cout << "Success!" << std::endl;
         // toString();
     }
     catch (Token* errorToken){

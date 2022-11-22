@@ -16,6 +16,7 @@ class Interpreter {
         Interpreter(DataLogProgram DLP){
             this->DLP = DLP;
         };
+        
         void Run(){
                 schemes = DLP.returnSchemes();
                 for (unsigned int i = 0; i < schemes.size(); i++){
@@ -29,7 +30,7 @@ class Interpreter {
                     Relation* relation = database.GetRelation(facts[i].returnPredID());
                     relation->addTuple(tuple.createTuple(facts[i].returnParams()));
                 }
-                
+                cout << "Rule Evaluation" << endl;
                 rules = DLP.returnRules();
                 bool tuplesAdded = true;
                 int loopcount = 0;
@@ -38,14 +39,14 @@ class Interpreter {
                     for (auto rule:rules){
                         rule.ruleToString();
                         cout << '.' << endl;
-
                         // Step 1: Evaluate Predicates
                         vector<Relation*> finalRelations;
                         for (auto body:rule.getBody()){
                             finalRelations.push_back(evaluatePredicate(body));
                         }
-
+                        // finalRelations.at(0)->toString();
                         relation = finalRelations.at(0);
+
 
                         // Step 2: Projection
                         if (finalRelations.size() > 1){
@@ -71,14 +72,22 @@ class Interpreter {
                         relation->setHeader(database.GetRelation(rule.returnHead().returnPredID())->getName());
 
                         // Step 5: Union
-                        tuplesAdded = database.GetRelation(rule.getHeadName())->unionize(finalRelations.at(loopcount));
+                        string relName = rule.getHeadName();
+                        Relation *testRel = database.GetRelation(relName);
+                        testRel->unionize(relation);
+                        
+                        tuplesAdded = database.GetRelation(rule.getHeadName())->unionize(relation);
                         loopcount++;
+                        tupleToString(relation->returnTuples(), relation);
                     }
-                    cout << "?????" << endl;
-                    tupleToString(relation->returnTuples(), relation);
+                    for (auto rule:rules){
+                        rule.ruleToString();
+                        cout << '.' << endl;
+                    }
                 } while (tuplesAdded);
                 cout << endl << "Schemes populated after " << loopcount << " passes through the Rules." << endl << endl;
-
+                
+                cout << "Query Evaluation" << endl;
                 queries = DLP.returnQueries();
                 for (unsigned int i = 0; i < queries.size(); i++){
                     queries[i].predToString();
@@ -127,14 +136,13 @@ class Interpreter {
                     auto it = seenVals.find(currentParam);
                     size_t secondVal;
                     if (it != seenVals.end()){
-                        secondVal = it->second;
+                        secondVal = seenVals.at(currentParam);
                         factRelation = factRelation->selectInIn(secondVal, i);
                     }
                     else {
                         seenVals.insert({currentParam, i});
                         indexes.push_back(i);
                         vectorStrings.push_back(currentParam);
-                        factRelation = factRelation->selectInVal(i, currentParam);
                     }
                 }
             }
@@ -143,12 +151,9 @@ class Interpreter {
             return factRelation;
         }
         void tupleToString(set<Tuple> tuples, Relation* headRelation){
-            cout << "got here~!" << endl;
-            // ! Why No TUPLES
-            cout << tuples.size() << endl;
             for (auto item:tuples){
                 cout << "  ";
-                for (size_t i = 0; i < headRelation->returnColumns().headerSize(); i++){
+                for (int i = 0; i < headRelation->returnColumns().headerSize(); i++){
                     cout << headRelation->returnColumns().returnHeaders().at(i) << "=" << item.at(i);
                     if (i + 1 != headRelation->returnColumns().headerSize()){
                         cout << ", ";
