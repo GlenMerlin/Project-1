@@ -31,132 +31,110 @@ class Interpreter {
                     relation->addTuple(tuple.createTuple(facts[i].returnParams()));
                 }
                 cout << "Rule Evaluation" << endl;
-                rules = DLP.returnRules();
-                bool tuplesAdded = true;
-                int loopcount = 0;
-                do{
-                    Relation* relation;
-                    for (auto rule:rules){
-                        rule.ruleToString();
-                        cout << '.' << endl;
-                        // Step 1: Evaluate Predicates
-                        vector<Relation*> finalRelations;
-                        for (auto body:rule.getBody()){
-                            finalRelations.push_back(evaluatePredicate(body));
-                        }
-                        // finalRelations.at(0)->toString();
-                        relation = finalRelations.at(0);
-
-
-                        // Step 2: Projection
-                        if (finalRelations.size() > 1){
-                            for (unsigned int i = 1; i < finalRelations.size(); i++){
-                                relation = relation->natJoin(finalRelations.at(i));
-                            }
-                        }
-
-                        // Step 3: Project
-                        vector<string> ColumnNames;
-                        vector<int> ColumnNums;
-                        for (unsigned int i = 0; i < rule.returnHead().returnParams().size(); i++){
-                            int requiredLoops = relation->returnColumns().headerSize();
-                            for (int j = 0; j < requiredLoops; j++){
-                                if (rule.returnHead().returnParams().at(i).parameterToString() == relation->returnColumns().at(j)){
-                                    ColumnNames.push_back(rule.returnHead().returnParams().at(i).parameterToString());
-                                    ColumnNums.push_back(j);
-                                }
-                            }
-                        }
-                        relation = relation->project(ColumnNums);
-
-                        // Step 4: Rename
-                        
-                        relation->setHeader(database.GetRelation(rule.returnHead().returnPredID())->getName());
-
-                        // Step 5: Union
-                        string relName = rule.getHeadName();
-                        Relation *testRel = database.GetRelation(relName);
-                        testRel->unionize(relation);
-                        
-                        tuplesAdded = database.GetRelation(rule.getHeadName())->unionize(relation);
-                        loopcount++;
-                        tupleToString(relation->returnTuples(), relation, ColumnNames);
-                    }
-                    for (auto rule:rules){
-                        rule.ruleToString();
-                        cout << '.' << endl;
-                    }
-                } while (tuplesAdded);
-                cout << endl << "Schemes populated after " << loopcount << " passes through the Rules." << endl << endl;
+                evaluateRules();
                 
                 cout << "Query Evaluation" << endl;
                 queries = DLP.returnQueries();
                 for (unsigned int i = 0; i < queries.size(); i++){
                     queries[i].predToString();
-                    Relation* relation = database.GetRelation(queries[i].returnPredID());
-                    Relation* queryRelation = new Relation(relation);
-                    
-                    vector<Parameter> queryParams = queries[i].returnParams();
-                    vector<string> ColumnNames;
-                    vector<int> ColumnNums;
-                    map<string, int> variables;
+                    Relation* relation = evaluatePredicate(queries[i]);
+                    relation->toString();
+                }
+            }
 
-                    for (unsigned int j = 0; j < queryParams.size(); j++){
-                        string currParam = queryParams[j].parameterToString();
-                        if (queryParams[j].isConstant()){
-                            queryRelation = queryRelation->selectInVal(j, currParam);
+
+        Relation* evaluatePredicate(Predicate predicate){
+            Relation *factRelation = new Relation(database.GetRelation(predicate.returnPredID()));
+
+            vector<Parameter> factParams = predicate.returnParams();
+            vector<string> ColumnNames;
+            vector<int> ColumnNums;
+            map<string, int> variables;
+
+            for (unsigned int j = 0; j < factParams.size(); j++)
+            {
+                string currParam = factParams[j].parameterToString();
+                if (factParams[j].isConstant())
+                {
+                    factRelation = factRelation->selectInVal(j, currParam);
+                }
+                else
+                {
+                    if (variables.find(currParam) == variables.end())
+                    {
+                        variables.insert({currParam, j});
+                        ColumnNames.push_back(currParam);
+                        ColumnNums.push_back(j);
+                    }
+                    else
+                    {
+                        factRelation = factRelation->selectInIn(variables[currParam], j);
+                    }
+                }
+            }
+            factRelation = factRelation->project(ColumnNums);
+            factRelation = factRelation->rename(ColumnNames);
+            return factRelation;
+        }
+
+
+        void evaluateRules(){
+            bool changed = true;
+            int loopcount = 0;
+            while(changed){
+                changed = false;
+                loopcount++;
+                int sizeBefore = database.size();
+
+                for (auto rule : DLP.returnRules()){
+                    rule.ruleToString();
+                    cout << '.' << endl;
+
+                    // Step 1: Evaluate Predicates
+                    vector<Relation *> finalRelations;
+                    for (auto bodyObj : rule.getBody()){
+                        finalRelations.push_back(evaluatePredicate(bodyObj));
+                    }
+
+                    Relation * relation = finalRelations.at(0);
+                    // Step 2: Join
+                    if (finalRelations.size() > 1){
+                        for (unsigned int i = 1; i < finalRelations.size(); i++){
+                            relation = relation->natJoin(finalRelations.at(i));
                         }
-                        else {
-                            if (variables.find(currParam) == variables.end()){
-                                variables.insert({currParam, j});
-                                ColumnNames.push_back(currParam);
+                    }
+
+                    // Step 3: Project
+                    vector<int> ColumnNums;
+                    for (unsigned int i = 0; i < rule.returnHead().returnParams().size(); i++){
+                        for (int j = 0; j < relation->returnColumns().headerSize(); j++){
+                            if (rule.returnHead().returnParams().at(i).parameterToString() == relation->returnColumns().at(j)){
                                 ColumnNums.push_back(j);
                             }
-                            else {
-                                queryRelation = queryRelation->selectInIn(variables[currParam], j);
-                            }
                         }
                     }
-                    queryRelation = queryRelation->project(ColumnNums);
-                    queryRelation = queryRelation->rename(ColumnNames);
-                    //  print the resulting queryRelation
-                    queryRelation->toString();
+
+                    relation = relation->project(ColumnNums);
+
+                    // Step 4: Rename
+                    relation->setHeader(database.GetRelation(rule.getHeadName())->returnColumns());
+                    // Step 5: Union
+                    database.GetRelation(rule.getHeadName())->unionize(relation);
                 }
+
+                int sizeAfter = database.size();
+                if (sizeBefore != sizeAfter){
+                    changed = true;
+                }
+
             }
-        Relation* evaluatePredicate(Predicate predicate){
-            map<string, int> seenVals;
-            Relation* factRelation = database.GetRelation(predicate.returnPredID());
-            vector<int> indexes;
-            vector<string> vectorStrings;
-            vector<Parameter> parameters = predicate.returnParams();
-            for (size_t i = 0; i < parameters.size(); i++){
-                string currentParam = predicate.returnParams().at(i);
-                if (parameters[i].isConstant()){
-                    factRelation = factRelation->selectInVal(i, currentParam);
-                }
-                else {
-                    auto it = seenVals.find(currentParam);
-                    size_t secondVal;
-                    if (it != seenVals.end()){
-                        secondVal = seenVals.at(currentParam);
-                        factRelation = factRelation->selectInIn(secondVal, i);
-                    }
-                    else {
-                        seenVals.insert({currentParam, i});
-                        indexes.push_back(i);
-                        vectorStrings.push_back(currentParam);
-                    }
-                }
-            }
-            factRelation = factRelation->project(indexes);
-            factRelation = factRelation->rename(vectorStrings);
-            return factRelation;
+            cout << endl << "Schemes populated after " << loopcount << " passes through the Rules." << endl << endl;
         }
         void tupleToString(set<Tuple> tuples, Relation* headRelation, vector<string> ColumnNames){
             for (auto item:tuples){
                 cout << "  ";
                 for (int i = 0; i < headRelation->returnColumns().headerSize(); i++){
-                    cout << (char) toupper(ColumnNames.at(i)[0])  << "=" << item.at(i);
+                    cout << (char) tolower(ColumnNames.at(i)[0])  << "=" << item.at(i);
                     if (i + 1 != headRelation->returnColumns().headerSize()){
                         cout << ", ";
                     }

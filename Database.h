@@ -7,6 +7,36 @@
 
 using namespace std;
 
+class Header {
+    vector<string> headers;
+public:
+    Header createHeaders(vector<Parameter> parameters){
+        for (unsigned int i = 0; i < parameters.size(); i++){
+            headers.push_back(parameters[i].parameterToString());
+        }
+        return *this;
+    }
+    Header createHeaders(vector<string> parameters){
+        for (unsigned int i = 0; i < parameters.size(); i++){
+            headers.push_back(parameters[i]);
+        }
+        return *this;
+    }
+    vector<string> returnHeaders(){
+        return this->headers;
+    }
+    string at(int index){
+        return headers.at(index);
+    }
+    void push_back(string value){
+        headers.push_back(value);
+    }
+    void toString(unsigned int i){
+        cout << headers.at(i);
+    }
+    int headerSize(){return headers.size();}
+};
+
 class Tuple {
     vector<string> values;
     
@@ -35,39 +65,24 @@ class Tuple {
         void toString(unsigned int i) {
                 cout << values[i];
         }
+        string toStr(Header header){
+            if (size() != header.headerSize()){
+                throw;
+            }
+            stringstream out;
+            string sep = "";
+            for (int i = 0; i < size(); i++){
+                string name = header.at(i);
+                string value = at(i);
+                out << sep << name << "=" << value;
+                sep = ", ";
+            }
+            return out.str();
+        }
         int size(){return values.size();};
 };
 
-class Header {
-    vector<string> headers;
-    unsigned int i = 0;
-    public:
-        Header createHeaders(vector<Parameter> parameters){
-            for (unsigned int i = 0; i < parameters.size(); i++){
-                headers.push_back(parameters[i].parameterToString());
-            }
-            return *this;
-        }
-        Header createHeaders(vector<string> parameters){
-            for (unsigned int i = 0; i < parameters.size(); i++){
-                headers.push_back(parameters[i]);
-            }
-            return *this;
-        }
-        vector<string> returnHeaders(){
-            return this->headers;
-        }
-        string at(int index){
-            return headers.at(index);
-        }
-        void push_back(string value){
-            headers.push_back(value);
-        }
-        void toString(unsigned int i){
-            cout << headers.at(i);
-        }
-        int headerSize(){return headers.size();}
-};
+
 
 class Relation {
     private:
@@ -122,13 +137,13 @@ class Relation {
         Relation* project(vector<int> columnsToProject){
             Header newHeader;
             set<Tuple> newTuples;
-            for (unsigned int i = 0; i < columnsToProject.size(); i++){
+            for (auto i : columnsToProject){
                 newHeader.push_back(this->columnNames.at(i));
             }
             for (auto row:tuples){
                 Tuple newRow;
-                for (unsigned int i = 0; i < columnsToProject.size(); i++){
-                    newRow.push_back(row.at(columnsToProject.at(i)));
+                for (auto i : columnsToProject){
+                    newRow.push_back(row.at(i));
                 }
                 newTuples.insert(newRow);
             }
@@ -142,30 +157,55 @@ class Relation {
         }
 
         Relation* natJoin(Relation* second){
-            Header newHead = joinHeaders(this->columnNames, second->columnNames, matches);
+            Relation* r1 = this;
+            Relation* r2 = second;
+            // might not be needed
+            string newName = (r1->getName() + " |x| " + r2->getName());
+
+            Header h1 = r1->returnColumns();
+            Header h2 = r2->returnColumns();
+
+            vector<int> uniqueCols;
+
+            for (int i = 0; i < h2.headerSize(); i++){
+                bool found = false;
+
+                for (int j = 0; j < h1.headerSize(); j++){
+                    if (h1.at(j) == h2.at(i)){
+                        found = true;
+                        matches.insert({j,i});
+                    }
+                }
+                if (!found){
+                    uniqueCols.push_back(i);
+                }
+            }
+
+            Header newHead = joinHeaders(h1, h2);
+
+
             set<Tuple> newTuples;
-            Tuple newTuple;
-            for (auto tuple2:second->tuples){
-                for (auto tuple:this->tuples){
-                    if (isJoinable(tuple, tuple2, matches)){
-                        newTuple = joinTuples(tuple, tuple2, matches);
+            for (auto t1 : r1->returnTuples()){
+                for (auto t2: r2->returnTuples()){
+                    if (isJoinable(t1, t2)){
+                        Tuple newTuple = joinTuples(t1, t2, uniqueCols);
                         newTuples.insert(newTuple);
                     }
                 }
             }
-            return new Relation(name, newHead, newTuples);
+            return new Relation(newName, newHead, newTuples);
         };
 
-        bool isJoinable(Tuple first, Tuple second, map<int, int> &matches){
-            for (auto match:matches){
-                if (first.at(match.first) == second.at(match.second)){
-                    return true;
+        bool isJoinable(Tuple first, Tuple second){
+            for (auto [i, j] : matches){
+                if (first.at(i) != second.at(j)){
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
-        Header joinHeaders(Header first, Header second, map<int,int> &matches){
+        Header joinHeaders(Header first, Header second){
             Header newHeader = first;
             for (int i = 0; i < second.headerSize(); i++){
                 bool unique = true;
@@ -182,34 +222,27 @@ class Relation {
             return newHeader;    
         }
 
-        Tuple joinTuples(Tuple first, Tuple second, map<int, int> &matches){
-            vector<string> newParams;
+        Tuple joinTuples(Tuple first, Tuple second, vector<int>& uniqueCols){
+
             Tuple newTuple = first;
-            for (auto match:matches){
-                for (int i = 0; i < second.size(); i++){
-                    if (i == match.second){
-                        continue;
-                    }
-                    else {
-                        newTuple.push_back(second.at(i));
-                    }
-                }
+
+            for (auto i : uniqueCols){
+                newTuple.push_back(second.at(i));
             }
-            newTuple.createTuple(newParams);
+
             return newTuple;
         }
-        bool unionize(Relation* finalRelation){
-            bool result = false;
+
+        void unionize(Relation* finalRelation){
             for (auto item:finalRelation->returnTuples()){
                 if (tuples.insert(item).second){
-                    result = true;
+                    cout << "  " << item.toStr(finalRelation->returnColumns()) << endl;
                 }
             }
-            return result;
         }
-        Relation * setHeader(string newName){
-            this->name = newName;
-            return this;
+
+        void setHeader(const Header &header){
+            columnNames = header;
         }
 
         Header returnColumns(){return columnNames;}
@@ -271,4 +304,11 @@ class Database {
             databaseMap.insert({newRelation->getName(), newRelation});
         }
         Relation* GetRelation(string relationName){return databaseMap.at(relationName);}
+        int size(){
+            int size = 0;
+            for (auto i : databaseMap){
+                size += i.second->tupleSize();
+            }
+            return size;
+        }
 };
